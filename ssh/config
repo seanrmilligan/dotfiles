@@ -1,0 +1,17 @@
+Host sparky
+	HostName sparky.ic.stonybrook.edu
+	Port 24
+	User semilligan
+
+Host cloud
+	HostName 130.245.169.83
+	Port 22134
+	User sean
+
+Host website
+	HostName ssh.phx.nearlyfreespeech.net
+	User seanrmilligan_seanrmilligan
+
+Host blog
+	HostName ssh.phx.nearlyfreespeech.net
+	User seanrmilligan_seanrmilliganblog
