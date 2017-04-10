@@ -26,10 +26,10 @@ Steps:
 
 Steps:
   1. sudo apt install git
-  2. git config --global user.email "<email>"
-  3. git config --global user.name "<name>"
+  2. git config --global user.email "user@email.com"
+  3. git config --global user.name "John Doe"
   4. git config --global commit.gpgsign true
-  5. git config --global user.signingkey <fingerprint>
-  6 .git config --global gpg.program /usr/bin/gpg2
+  5. git config --global user.signingkey [fingerprint]
+  6. git config --global gpg.program /usr/bin/gpg2
 
 Note: Set up gpg before committing anything
