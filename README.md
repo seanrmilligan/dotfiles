@@ -5,8 +5,8 @@ Assumption: /repo/ is the folder where you have cloned this repository.
 ## bash
 
 Steps:
-  1. mv /repo/bash/.bashrc ~/bashrc
-  2. mv /repo/bash/.bash_aliases ~/.bash_aliases
+  1. mv /repo/bash/bashrc ~/.bashrc
+  2. mv /repo/bash/bash_aliases ~/.bash_aliases
 
 ## gpg
 
