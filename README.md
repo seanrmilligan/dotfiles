@@ -33,3 +33,14 @@ Steps:
   6. git config --global gpg.program /usr/bin/gpg2
 
 Note: Set up gpg before committing anything
+
+## misc
+
+```
+sudo add-apt-repository ppa:snaipewastaken/ppa
+sudo add-apt-repository ppa:gnome-terminator
+sudo apt update
+sudo apt upgrade
+sudo apt install criterion-dev
+sudo apt install terminator
+```
