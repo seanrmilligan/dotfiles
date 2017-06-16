@@ -5,8 +5,8 @@ Assumption: /repo/ is the folder where you have cloned this repository.
 ## bash
 
 Steps:
-  1. mv /repo/bash/bashrc ~/.bashrc
-  2. mv /repo/bash/bash_aliases ~/.bash_aliases
+  1. cp /repo/bash/bashrc ~/.bashrc
+  2. cp /repo/bash/bash_aliases ~/.bash_aliases
 
 ## gpg
 
@@ -21,7 +21,7 @@ Steps:
 
 Steps:
   1. mkdir -p ~/.ssh
-  2. mv /repo/ssh/config ~/.ssh/config
+  2. cp /repo/ssh/config ~/.ssh/config
 
 ## git
 
@@ -32,7 +32,7 @@ Steps:
   4. git config --global commit.gpgsign true
   5. git config --global user.signingkey [fingerprint]
   6. git config --global gpg.program /usr/bin/gpg2
-  7. git config --lgobal push.default simple
+  7. git config --global push.default simple
 
 Note: Set up gpg before committing anything
 
