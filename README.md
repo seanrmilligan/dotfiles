@@ -50,6 +50,6 @@ sudo add-apt-repository ppa:gnome-terminator
 
 sudo apt update
 sudo apt upgrade
-sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl
+sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl vim
 
 ```
