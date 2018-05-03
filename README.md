@@ -54,6 +54,6 @@ sudo add-apt-repository ppa:gnome-terminator
 
 sudo apt update
 sudo apt upgrade
-sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl apt-transport-https dotnet-sdk-2.1.105
+sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl vim apt-transport-https dotnet-sdk-2.1.105
 
 ```
