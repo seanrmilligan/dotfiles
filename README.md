@@ -45,11 +45,15 @@ echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sou
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
 sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list'
+
 sudo add-apt-repository ppa:snaipewastaken/ppa
 sudo add-apt-repository ppa:gnome-terminator
 
 sudo apt update
 sudo apt upgrade
-sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl
+sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl apt-transport-https dotnet-sdk-2.1.105
 
 ```
