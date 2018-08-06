@@ -56,6 +56,6 @@ sudo add-apt-repository ppa:numix/ppa
 
 sudo apt update
 sudo apt upgrade
-sudo apt install criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl vim apt-transport-https dotnet-sdk-2.1.105 code numix-icon-theme-circle
+sudo apt install gnupg2 criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl vim apt-transport-https dotnet-sdk-2.1.105 code numix-icon-theme-circle
 
 ```
