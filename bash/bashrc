@@ -84,7 +84,11 @@ function prompt {
 	export PS1="$GREENLIGHT\u@\h$CLR:[$BLUELIGHT\w$CLR]$REDLIGHT\$(show_git)$CLR $ "
 }
 
-prompt
+if [ "$color_prompt" = yes ]; then
+    prompt
+else
+    PS1="\u@\h:[\w]\$(show_git) $ "
+fi
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
