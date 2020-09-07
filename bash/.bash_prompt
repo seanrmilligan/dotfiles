@@ -1,0 +1,92 @@
+POWERLINE_SH_FILE="/usr/local/lib/python3.8/dist-packages/powerline/bindings/bash/powerline.sh"
+
+# Load powerline
+# Powerline provides advanced prompt customization
+function powerline_prompt() {
+    powerline-daemon -q
+    POWERLINE_BASH_CONTINUATION=1
+    POWERLINE_BASH_SELECT=1
+    source $POWERLINE_SH_FILE
+}
+
+# Show the current git branch
+function git_branch() {
+        git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+# Create a basic prompt
+#
+# Prompt colors:
+# 30-37 foreground
+# 40-47 background
+# 90-97 high intensity foreground
+# 100-107 high intensity background
+#
+# 0 - Black
+# 1 - Red
+# 2 - Green
+# 3 - Yellow
+# 4 - Blue
+# 5 - Purple
+# 6 - Cyan
+# 7 - White
+#
+# Bold bit:
+# 0 - Normal
+# 1 - Bold
+#
+# Format:
+# \[\e[BOLD_BIT;COLOR\]
+#
+# Special values:
+# \u user
+# \h hostname
+# \w working directory
+#
+# Example rendering:
+# sean@zephyr:[~/code/linx-config](master) $
+#
+function basic_prompt {
+        local BLACK="\[\e[0;30m\]"
+        local BLACKBOLD="\[\e[1;30m\]"
+        local RED="\[\e[0;31m\]"
+        local REDBOLD="\[\e[1;31m\]"
+        local REDLIGHT="\[\e[1;91m\]"
+        local GREEN="\[\e[0;32m\]"
+        local GREENBOLD="\[\e[1;32m\]"
+        local GREENLIGHT="\[\e[0;92m\]"
+        local YELLOW="\[\e[0;33m\]"
+        local YELLOWBOLD="\[\e[1;33m\]"
+        local BLUE="\[\e[0;34m\]"
+        local BLUEBOLD="\[\e[1;34m\]"
+        local BLUELIGHT="\[\e[0;94m\]"
+        local PURPLE="\[\e[0;35m\]"
+        local PURPLEBOLD="\[\e[1;35m\]"
+        local CYAN="\[\e[0;36m\]"
+        local CYANBOLD="\[\e[1;36m\]"
+        local WHITE="\[\e[0;37m\]"
+        local WHITEBOLD="\[\e[1;37m\]"
+        local CLR="\[\e[0m\]"
+
+        export PS1="$GREENLIGHT\u@\h$CLR:[$BLUELIGHT\w$CLR]$REDLIGHT\$(git_branch)$CLR $ "
+}
+
+# If $TERM is set to a color-enabled terminal, turn on the color prompt.
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# If we are using a colored prompt, check if powerline is installed.
+# If powerline is not installed, default to the basic color prompt defined above.
+# If we are not using a colored prompt, use a non-stylized prompt.
+if [ "$color_prompt" = yes ]; then
+    if [ -f /usr/local/bin/powerline-daemon -a -f $POWERLINE_SH_FILE ]; then
+        powerline_prompt
+    else
+        basic_prompt
+    fi
+else
+    PS1="\u@\h:[\w]\$(show_git) $ "
+fi
+
+unset color_prompt 
