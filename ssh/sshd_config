@@ -1,0 +1,12 @@
+# /etc/ssh/sshd_config
+
+UsePAM yes
+
+# Disable password-based authentication
+# Have an ssh key installed on the machine first!
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+
+# Disable logging in as root. Values:
+# "yes", "prohibit-password" (deprecated alias: "without-password"), "forced-commands-only", or "no"
+PermitRootLogin no

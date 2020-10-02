@@ -1,40 +1,6 @@
-Host sparky
-	HostName sparky.ic.stonybrook.edu
-	Port 24
-	User semilligan
+# Global: /etc/ssh/ssh_config
+# Local: ~/.ssh/config
 
-Host www.seanrmilligan.com
-	HostName ssh.phx.nearlyfreespeech.net
-	User seanrmilligan_seanrmilligan
-
-Host blog.seanrmilligan.com
-	HostName ssh.phx.nearlyfreespeech.net
-	User seanrmilligan_seanrmilliganblog
-
-Host code.seanrmilligan.com
-	HostName code.seanrmilligan.com
-	User ubuntu
-	IdentityFile ~/.ssh/code.seanrmilligan.com
-
-Host odeon
-	HostName ec2-35-167-188-88.us-west-2.compute.amazonaws.com
-	Port 22
-	User ubuntu
-
-Host api.swiftkit.co
-	HostName 52.38.144.83
-	Port 22
-	User ubuntu
-	IdentityFile ~/.ssh/swiftkit
-
-Host www.swiftkit.co
-	HostName 52.38.144.83
-	Port 22
-	User ubuntu
-	IdentityFile ~/.ssh/swiftkit
-
-Host db.swiftkit.co
-	HostName 52.38.144.83
-	Port 22
-	User ubuntu
-	IdentityFile ~/.ssh/swiftkit
+Host sean.codes
+	HostName sean.codes
+	User sean
