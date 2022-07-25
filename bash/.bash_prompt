@@ -1,8 +1,3 @@
-# If TERM is set to a color-enabled terminal, turn on the color prompt.
-case "$TERM" in
-  xterm-color|*-256color) color_prompt=yes;;
-esac
-
 # Create a basic prompt
 #
 # Prompt color ranges:
@@ -33,6 +28,16 @@ esac
 # \h hostname
 # \w working directory
 function set_prompt {
+
+  local color_prompt="no"
+
+  # If TERM is set to a color-enabled terminal, turn on the color prompt.
+  case "$TERM" in
+    xterm-color|*-256color)
+      color_prompt="yes"
+    ;;
+  esac
+
   local BLACK="\[\e[0;30m\]"
   local BLACKBOLD="\[\e[1;30m\]"
   local RED="\[\e[0;31m\]"
@@ -54,16 +59,23 @@ function set_prompt {
   local WHITEBOLD="\[\e[1;37m\]"
   local CLR="\[\e[0m\]"
 
+  # Check if the current directory is a git repository.
+  local git_branch=$(git branch --show-current 2> /dev/null)
+  if [ "$git_branch" != "" ]
+  then
+    # Style the branch name to insert into the prompt string.
+    git_branch="($git_branch) "
+  fi
+
   case "$PWD" in
     ${HOME}*)
       # User's home directory.
       # Replace the leading part of the path that matches $HOME with a ~
-      local git_branch=$(git branch --show-current 2> /dev/null)
       if [ "$color_prompt" == "yes" ]
       then
-        export PS1="$BLUELIGHT~${PWD/$HOME/}$CLR $ "
+        export PS1="$BLUELIGHT~${PWD/$HOME/}$CLR $git_branch$ "
       else
-        export PS1="~${PWD/$HOME/} $ "
+        export PS1="~${PWD/$HOME/} $git_branch$ "
       fi
       ;;
     *)
@@ -71,12 +83,10 @@ function set_prompt {
       local git_branch=$(git branch --show-current 2> /dev/null)
       if [ "$color_prompt" == "yes" ]
       then
-        export PS1="$BLUELIGHT$PWD$CLR $ "
+        export PS1="$BLUELIGHT$PWD$CLR $git_branch$ "
       else
-        export PS1="$PWD $ "
+        export PS1="$PWD $git_branch$ "
       fi
       ;;
    esac
 }
-
-unset color_prompt
