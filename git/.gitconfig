@@ -1,0 +1,12 @@
+[user]
+  email = hello@sean.codes
+  name = Sean Milligan
+[core]
+  autocrlf = input
+  editor = nano
+  eol = native
+  excludesfile = ~/.gitignore_global
+  longpaths = true
+  page = less
+[init]
+  defaultBranch = ""

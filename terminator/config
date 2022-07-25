@@ -1,0 +1,26 @@
+[global_config]
+  window_state = maximise
+[keybindings]
+[profiles]
+  [[default]]
+    audible_bell = True
+    icon_bell = False
+    background_color = "#300a24"
+    background_darkness = 0.95
+    cursor_shape = underline
+    cursor_color = "#aaaaaa"
+    foreground_color = "#ffffff"
+    show_titlebar = False
+    scrollbar_position = hidden
+    scroll_on_output = True
+    scrollback_infinite = True
+    disable_mousewheel_zoom = True
+[layouts]
+  [[default]]
+    [[[window0]]]
+      type = Window
+      parent = ""
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+[plugins]

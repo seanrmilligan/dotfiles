@@ -1,61 +1,64 @@
-# Configuring your new computer
+# Setting up
 
-Assumption: /repo/ is the folder where you have cloned this repository.
-
-## bash
-
-Steps:
-  1. cp /repo/bash/bashrc ~/.bashrc
-  2. cp /repo/bash/bash_aliases ~/.bash_aliases
-
-## gpg
-
-Assumption: The public key is named public.key and the private key is named private.key
-
-Steps:
-  1. gpg --import public.key
-  2. gpg --import private.key
-  3. gpg --list-keys --fingerprint
-
-## ssh
-
-Steps:
-  1. mkdir -p ~/.ssh
-  2. cp /repo/ssh/config ~/.ssh/config
-
-## git
-
-Steps:
-  1. sudo apt install git
-  2. git config --global user.email "user@email.com"
-  3. git config --global user.name "John Doe"
-  4. git config --global commit.gpgsign true
-  5. git config --global user.signingkey [fingerprint]
-  6. git config --global gpg.program /usr/bin/gpg2
-  7. git config --global push.default simple
-
-Note: Set up gpg before committing anything
-
-## misc
-
+## The One-liner
 ```
-wget -q -O - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
-sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list'
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-
-sudo add-apt-repository ppa:snaipewastaken/ppa
-sudo add-apt-repository ppa:gnome-terminator
-sudo add-apt-repository ppa:numix/ppa
-
-sudo apt update
-sudo apt upgrade
-sudo apt install gnupg2 criterion-dev terminator gcc clang make gdb cgdb valgrind git sublime-text google-chrome-stable curl vim apt-transport-https dotnet-sdk-2.1.105 code numix-icon-theme-circle
-
+git clone git@github.com:seanrmilligan/dotfiles $HOME/dotfiles && bash $HOME/dotfiles/install.sh
 ```
+
+## GNU Stow
+GNU Stow is a symlink manager used to centrally locate files in a filesystem
+while making them appear to be spread throughout the filesystem.
+
+While there are other uses, I use it here to keep dotfiles in a git repo for
+version control while creating symlinks across the filesystem to where the
+various apps I use expect to find their config files.
+
+### Installing
+```
+sudo apt install stow
+```
+
+### Using Stow
+Stow allows you to name the folders for each app whatever you like. The name
+you give the folder is then used to link (stow) or unlink (unstow) everything
+under that directory all at once.
+
+Assume the following dotfiles managed by stow in our dotfiles git repo:
+```
+  ~/
+  |
+  + -- dotfiles/
+       |
+       + -- bash/
+       |    |
+       |    + -- .bashrc
+       |    + -- .bash_aliases
+       |
+       + -- vim/
+            |
+            + -- .vim/
+                 |
+                 + -- .vimrc
+```
+
+Setting up the symlinks is as simple as telling stow the folder names:
+```
+stow bash vim
+```
+
+### Migrating existing dotfiles
+Moving existing dotfiles to be managed by stow works as follows:
+
+  1. Make a directory in stow for the app you want to manage.
+     ```
+     mkdir ~/vim
+     ```
+  2. Move the dotfile to the dotfiles repo:
+     ```
+     mv ~/.vim ~/dotfiles/vim/.vim
+     ```
+  3. Link the migrated dotfiles back to where the app expects to find them
+     ```
+     cd ~/dotfiles && stow vim
+     ```
+You should now have a symlink `~/.vim` -> `~/dotfiles/vim/.vim`

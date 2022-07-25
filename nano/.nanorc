@@ -1,0 +1,8 @@
+set guidestripe 80
+set emptyline
+set linenumbers
+set mouse
+set numbercolor white
+set tabsize 2
+set tabstospaces
+set unix

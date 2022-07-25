@@ -2,5 +2,5 @@
 # Local: ~/.ssh/config
 
 Host sean.codes
-	HostName sean.codes
-	User sean
+  HostName sean.codes
+  User sean
