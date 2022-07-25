@@ -80,7 +80,6 @@ function set_prompt {
       ;;
     *)
       # Anywhere else. Leave directory as-is.
-      local git_branch=$(git branch --show-current 2> /dev/null)
       if [ "$color_prompt" == "yes" ]
       then
         export PS1="$BLUELIGHT$PWD$CLR $git_branch$ "
