@@ -27,7 +27,7 @@
 # \u user
 # \h hostname
 # \w working directory
-function set_prompt {
+set_prompt() {
 
   local color_prompt="no"
 
