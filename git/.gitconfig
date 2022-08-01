@@ -9,4 +9,4 @@
   longpaths = true
   page = less
 [init]
-  defaultBranch = ""
+  defaultBranch = "main"
