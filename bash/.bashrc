@@ -52,6 +52,12 @@ set_tmux_pane_title() {
   fi
 }
 
+set_tmux_window_name() {
+  if [ ! -z $TMUX ]; then
+    tmux rename-window "$(basename $PWD)"
+  fi
+}
+
 # #############################################################################
 # THE PROMPT
 # #############################################################################
@@ -73,6 +79,7 @@ prompt_command() {
   history -a
   history -r
   set_prompt
+  set_tmux_window_name
   set_tmux_pane_title $exit_code
 }
 
