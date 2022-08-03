@@ -47,14 +47,14 @@ HISTTIMEFORMAT="[%F %T%z] "
 # #############################################################################
 
 set_tmux_pane_title() {
-  if [ -n $TMUX ]; then
+  if [ -n "$TMUX" ]; then
     tmux select-pane -t "$TMUX_PANE" -T "$1"
   fi
 }
 
 set_tmux_window_name() {
-  if [ -n $TMUX ]; then
-    tmux rename-window "$(basename $PWD)"
+  if [ -n "$TMUX" ]; then
+    tmux rename-window "$(basename "$PWD")"
   fi
 }
 
@@ -98,16 +98,16 @@ shopt -s checkwinsize
 # #############################################################################
 
 # Load aliases from a separate file.
-if [ -f ~/.bash_aliases ]; then
-  source ~/.bash_aliases
+if [ -f "$HOME/.bash_aliases" ]; then
+  source "$HOME/.bash_aliases"
 fi
 
 # #############################################################################
 # PROMPT SETTINGS
 # #############################################################################
 
-if [ -f ~/.bash_prompt ]; then
-  source ~/.bash_prompt
+if [ -f "$HOME/.bash_prompt" ]; then
+  source "$HOME/.bash_prompt"
 fi
 
 # #############################################################################
