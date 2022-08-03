@@ -61,8 +61,7 @@ set_prompt() {
 
   # Check if the current directory is a git repository.
   local git_branch=$(git branch --show-current 2> /dev/null)
-  if [ "$git_branch" != "" ]
-  then
+  if [ -n "$git_branch" ]; then
     # Style the branch name to insert into the prompt string.
     git_branch="($git_branch) "
   fi

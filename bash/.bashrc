@@ -47,13 +47,13 @@ HISTTIMEFORMAT="[%F %T%z] "
 # #############################################################################
 
 set_tmux_pane_title() {
-  if [ ! -z $TMUX ]; then
-    tmux select-pane -t $TMUX_PANE -T $1
+  if [ -n $TMUX ]; then
+    tmux select-pane -t "$TMUX_PANE" -T "$1"
   fi
 }
 
 set_tmux_window_name() {
-  if [ ! -z $TMUX ]; then
+  if [ -n $TMUX ]; then
     tmux rename-window "$(basename $PWD)"
   fi
 }
@@ -115,9 +115,9 @@ fi
 # #############################################################################
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
+    source /usr/share/bash-completion/bash_completion
   elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
+    source /etc/bash_completion
   fi
 fi
 
