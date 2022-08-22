@@ -10,3 +10,5 @@
   page = less
 [init]
   defaultBranch = "main"
+[pull]
+	rebase = false
