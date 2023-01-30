@@ -11,4 +11,7 @@
 [init]
   defaultBranch = "main"
 [pull]
-	rebase = false
+  rebase = false
+[alias]
+  undo = reset HEAD~
+  last = log -1 HEAD
