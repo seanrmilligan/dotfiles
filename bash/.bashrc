@@ -19,6 +19,10 @@ if [ -f "$HOME/.bash_prompt" ]; then
   source "$HOME/.bash_prompt"
 fi
 
+if [ -f "$HOME/.bash_workspaces" ]; then
+  source "$HOME/.bash_workspaces"
+fi
+
 # #############################################################################
 # HISTORY SETTINGS
 # #############################################################################

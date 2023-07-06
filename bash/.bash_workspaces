@@ -1,0 +1,30 @@
+
+cdw() {
+  if [ -d "$HOME/projects" ]; then
+    if [ -d "$HOME/projects/$1" ]; then
+      cd "$HOME/projects/$1"
+    else
+      echo "No such workspace '$1'"
+    fi
+  else
+    echo "Root workspace directory does not exist."
+  fi
+}
+
+lsw() {
+  if [ -d "$HOME/projects" ]; then
+    find "$HOME/projects" -maxdepth 1 -mindepth 1 -type d -print
+  else
+    echo "Root workspace directory does not exist."
+  fi
+}
+
+rmw() {
+  if [ -d "$HOME/projects" ]; then
+    if [ -d "$HOME/projects/$1" ]; then
+      rm -rf "$HOME/projects/$1"
+    fi
+  else
+    echo "Root workspace directory does not exist."
+  fi
+}
