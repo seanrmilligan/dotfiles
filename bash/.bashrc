@@ -7,6 +7,19 @@ case $- in
 esac
 
 # #############################################################################
+# IMPORTS
+# #############################################################################
+
+# Load aliases from a separate file.
+if [ -f "$HOME/.bash_aliases" ]; then
+  source "$HOME/.bash_aliases"
+fi
+
+if [ -f "$HOME/.bash_prompt" ]; then
+  source "$HOME/.bash_prompt"
+fi
+
+# #############################################################################
 # HISTORY SETTINGS
 # #############################################################################
 
@@ -92,23 +105,6 @@ PROMPT_COMMAND='prompt_command'
 # Check the window size after each command.
 # Updates the values of LINES and COLUMNS with the new window dimensions.
 shopt -s checkwinsize
-
-# #############################################################################
-# ALIAS SETTINGS
-# #############################################################################
-
-# Load aliases from a separate file.
-if [ -f "$HOME/.bash_aliases" ]; then
-  source "$HOME/.bash_aliases"
-fi
-
-# #############################################################################
-# PROMPT SETTINGS
-# #############################################################################
-
-if [ -f "$HOME/.bash_prompt" ]; then
-  source "$HOME/.bash_prompt"
-fi
 
 # #############################################################################
 # BASH COMPLETION
