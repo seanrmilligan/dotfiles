@@ -13,7 +13,7 @@ cdw() {
 
 lsw() {
   if [ -d "$HOME/projects" ]; then
-    find "$HOME/projects" -maxdepth 1 -mindepth 1 -type d -print
+    find "$HOME/projects" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"
   else
     echo "Root workspace directory does not exist."
   fi
