@@ -25,9 +25,10 @@ done
 # corresponding program, we don't end up with a symlinked directory. This avoids
 # files being written back to the repository as the app creates caches, logs,
 # etc. in its (symlinked) folder.
-mkdir --parents $HOME/.config/terminator
+mkdir --parents $HOME/.config/lxqt
+mkdir --parents $HOME/.config/pcmanfm-qt/lxqt
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
-mkdir --parents $HOME/.config/pcmanfm-qt/lxqt/
+mkdir --parents $HOME/.config/terminator
 
 # Stow will not set up symlinks for the files we wish to install if they already
 # exist locally. The --adopt flag tells Stow to take in the local file over our
@@ -37,6 +38,7 @@ stow --adopt --dir=$HOME/dotfiles --target=$HOME \
   bash \
   gdb \
   git \
+  lxqt \
   nano \
   pcmanfm \
   profile \
