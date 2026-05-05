@@ -51,7 +51,7 @@ Moving existing dotfiles to be managed by stow works as follows:
 
   1. Make a directory in stow for the app you want to manage.
      ```
-     mkdir ~/vim
+     mkdir ~/dotfiles/vim
      ```
   2. Move the dotfile to the dotfiles repo:
      ```
