@@ -66,26 +66,21 @@ set_prompt() {
   # Check if the current directory is a git repository.
   local git_branch=$(git branch --show-current 2> /dev/null)
 
-
   case "$PWD" in
     ${HOME}*)
       # User's home directory.
-      # Replace the leading part of the path that matches $HOME with a ~
-      if [ "$color_prompt" == "yes" ]
-      then
-        export PS1="$BLUELIGHT~${PWD/$HOME/}$CLR ${git_branch:+"($git_branch) "}$ "
-      else
-        export PS1="~${PWD/$HOME/} ${git_branch:+"($git_branch) "}$ "
-      fi
+      # Format paths in $HOME as ~/ instead of /home/$(whoami)
+      local current_directory="~${PWD/$HOME/}"
       ;;
     *)
       # Anywhere else. Leave directory as-is.
-      if [ "$color_prompt" == "yes" ]
-      then
-        export PS1="$BLUELIGHT$PWD$CLR ${git_branch:+"($git_branch) "}$ "
-      else
-        export PS1="$PWD ${git_branch:+"($git_branch) "}$ "
-      fi
+      local current_directory="$PWD"
       ;;
    esac
+
+  if [ "$color_prompt" == "yes" ]; then
+    export PS1="$BLUELIGHT$current_directory$CLR ${git_branch:+"($git_branch) "}$ "
+  else
+    export PS1="$current_directory $git_branch$ "
+  fi
 }
