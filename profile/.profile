@@ -1,15 +1,31 @@
+#!/bin/sh
+
 # Executed by the command interpreter for login shells.
 
-# The shell searches all directories specified in $PATH for the command entered
-# by the user. Colon-separated list.
+# The shell searches all directories listed in $PATH for the command entered.
+# $PATH is a colon-separated list.
 #
-# Add a directory in the $HOME folder to the front of $PATH for scripts and
-# binaries of our own. We put this directory at the front to give precedence to
-# commands in this folder when commands of the same name live in more than one
-# place.
-if [ -d "$HOME/bin" ]; then
-  PATH="$HOME/bin:$PATH"
-fi
+# Add a directory in the $HOME folder to the front of $PATH for personal
+# scripts, binaries, and symlinks.
+#
+# Putting the directory at the front of the list gives it precedence as the
+# shell stops searching after it finds the first match.
+
+add_to_path() {
+  if [ -d "$1" ]; then
+    case "$PATH" in
+      *"$1"*)
+        # $1 is already in path, skip.
+        ;;
+      *)
+        PATH="$1:$PATH"
+        ;;
+    esac
+  fi
+}
+
+add_to_path "$HOME/bin"
+add_to_path "$HOME/.local/bin"
 
 # Attach to a tmux session. Create the session if there isn't one.
 if [ -z "$TMUX" ]; then
