@@ -30,7 +30,7 @@
 # \h hostname
 # \w working directory
 set_prompt() {
-
+  local exit_code="$1"
   local color_prompt="no"
 
   # If TERM is set to a color-enabled terminal, turn on the color prompt.
@@ -61,7 +61,7 @@ set_prompt() {
   local CYANBOLD="\[\e[1;36m\]"
   local WHITE="\[\e[0;37m\]"
   local WHITEBOLD="\[\e[1;37m\]"
-  local CLR="\[\e[0m\]"
+  local RESET="\[\e[0m\]"
 
   # Check if the current directory is a git repository.
   local git_branch=$(git branch --show-current 2> /dev/null)
@@ -76,11 +76,16 @@ set_prompt() {
       # Anywhere else. Leave directory as-is.
       local current_directory="$PWD"
       ;;
-   esac
+  esac
 
   if [ "$color_prompt" == "yes" ]; then
-    export PS1="$BLUELIGHT$current_directory$CLR ${git_branch:+"($git_branch) "}$ "
+    if [ "$exit_code" -eq 0 ]; then
+      local STATUS_COLOR="$GREEN"
+    else
+      local STATUS_COLOR="$RED"
+    fi
+    export PS1="$STATUS_COLOR●$RESET $BLUELIGHT$current_directory$RESET ${git_branch:+"($git_branch) "}$ "
   else
-    export PS1="$current_directory $git_branch$ "
+    export PS1="[$exit_code] $current_directory ${git_branch:+"($git_branch) "}$ "
   fi
 }
