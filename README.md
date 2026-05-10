@@ -2,7 +2,9 @@
 
 ## The One-liner
 ```
-git clone git@github.com:seanrmilligan/dotfiles $HOME/dotfiles && bash $HOME/dotfiles/install.sh
+git clone git@github.com:seanrmilligan/dotfiles "$HOME/dotfiles" &&
+  bash "$HOME/dotfiles/install-dotfiles.sh" &&
+  bash "$HOME/dotfiles/install-packages.sh"
 ```
 
 ## GNU Stow
@@ -61,4 +63,5 @@ Moving existing dotfiles to be managed by stow works as follows:
      ```
      cd ~/dotfiles && stow vim
      ```
+
 You should now have a symlink `~/.vim` -> `~/dotfiles/vim/.vim`
