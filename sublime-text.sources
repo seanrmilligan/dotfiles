@@ -1,0 +1,5 @@
+Types: deb
+URIs: https://download.sublimetext.com/
+Suites: apt/stable/
+Architectures: amd64
+Signed-By: /usr/share/keyrings/sublimehq.gpg

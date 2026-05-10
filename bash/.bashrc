@@ -132,3 +132,13 @@ shopt -s globstar
 # `lesspipe` helps make `less` more friendly for non-text files which still
 # have text embedded, such as PDFs and zipped/compressed files.
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+
+# -F: Automatically quit when the content is less than the screen height.
+# -N: Show line numbers.
+# -R: Print ANSI control characters to enable shell syntax highlighting.
+# -S: Prefer horizontal scrolling over line wrapping.
+if [ -x /usr/bin/source-highlight ]; then
+  export LESSOPEN="|/usr/share/source-highlight/src-hilite-lesspipe.sh %s"
+  export LESS="-F -N -R -S"
+fi

@@ -33,7 +33,9 @@ set_prompt() {
 
   # If TERM is set to a color-enabled terminal, turn on the color prompt.
   case "$TERM" in
-    xterm-color|*-256color)
+    xterm-color   | \
+    xterm-ghostty | \
+    *-256color    )
       color_prompt="yes"
     ;;
   esac

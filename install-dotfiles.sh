@@ -1,5 +1,11 @@
 #!/bin/bash
 
+set -e
+
+err() {
+  echo "$*" >&2
+}
+
 while ! command -v stow > /dev/null 2>&1
 do
   read -r -p "GNU Stow not installed. Install? [y/N] " option
@@ -7,6 +13,7 @@ do
   then
     sudo apt install stow
   else
+    err "Did not install GNU Stow."
     exit 1
   fi
 done
@@ -18,13 +25,27 @@ done
 # corresponding program, we don't end up with a symlinked directory. This avoids
 # files being written back to the repository as the app creates caches, logs,
 # etc. in its (symlinked) folder.
-mkdir --parents $HOME/.config/terminator
+mkdir --parents $HOME/.config/lxqt
+mkdir --parents $HOME/.config/pcmanfm-qt/lxqt
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
+mkdir --parents $HOME/.config/terminator
 
 # Stow will not set up symlinks for the files we wish to install if they already
 # exist locally. The --adopt flag tells Stow to take in the local file over our
 # version, making it safe to set up the symlink. We then revert any changes this
 # introduced -- we do want to install our version of the file, after all.
 stow --adopt --dir=$HOME/dotfiles --target=$HOME \
-  bash gdb git nano profile ssh sublime terminator tmux vim
+  bash \
+  gdb \
+  git \
+  lxqt \
+  nano \
+  pcmanfm \
+  profile \
+  ssh \
+  sublime \
+  terminator \
+  tmux \
+  vim
+
 git -C $HOME/dotfiles checkout . > /dev/null 2>&1
