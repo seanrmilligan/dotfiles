@@ -95,7 +95,7 @@ prompt_command() {
 
   history -a
   history -r
-  set_prompt
+  set_prompt $exit_code
   set_tmux_window_name
   set_tmux_pane_title $exit_code
 }

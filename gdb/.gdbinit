@@ -29,3 +29,5 @@ set history save on
 set history filename ~/.gdb-history
 set history size 9999999
 set trust-readonly-sections on
+
+tui enable

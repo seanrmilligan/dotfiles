@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Create a basic prompt
 #
 # Prompt color ranges:
@@ -28,17 +30,58 @@
 # \h hostname
 # \w working directory
 set_prompt() {
+  local exit_code="$1"
 
-  local color_prompt="no"
+  # Check if the current directory is a git repository.
+  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    # Get the current branch, or the commit hash if we are in a detached HEAD state.
+    local git_head
+    git_head=$(
+      git symbolic-ref --short -q HEAD || # current branch
+      git rev-parse --short HEAD # commit hash if we're in a detached HEAD state.
+      )
+
+    # Check if the repository has uncommitted or unstaged changes
+    # Refresh the git index. This eliminates false positives from files that have a more recent last-touched time, but no content diff.
+    git update-index -q --refresh
+    if ! git diff-index --quiet HEAD --; then
+      local repository_state="dirty"
+    elif [ "$(git rev-parse @)" != "$(git rev-parse "@{upstream}")" ]; then
+      local repository_state="unpushed"
+    else
+      local repository_state="clean"
+    fi
+  fi
+
+  case "$PWD" in
+    ${HOME}*)
+      # User's home directory.
+      # Format paths in $HOME as ~/ instead of /home/$(whoami)
+      local current_directory="~${PWD/$HOME/}"
+      ;;
+    *)
+      # Anywhere else. Leave directory as-is.
+      local current_directory="$PWD"
+      ;;
+  esac
 
   # If TERM is set to a color-enabled terminal, turn on the color prompt.
   case "$TERM" in
     xterm-color   | \
     xterm-ghostty | \
     *-256color    )
-      color_prompt="yes"
-    ;;
+      set_color_prompt "$exit_code" "$git_head" "$repository_state"
+      ;;
+    *)
+      set_plain_prompt "$exit_code" "$git_head" "$repository_state"
+      ;;
   esac
+}
+
+set_color_prompt() {
+  local exit_code="$1"
+  local git_head="$2"
+  local repository_state="$3"
 
   local BLACK="\[\e[0;30m\]"
   local BLACKBOLD="\[\e[1;30m\]"
@@ -59,34 +102,36 @@ set_prompt() {
   local CYANBOLD="\[\e[1;36m\]"
   local WHITE="\[\e[0;37m\]"
   local WHITEBOLD="\[\e[1;37m\]"
-  local CLR="\[\e[0m\]"
+  local RESET="\[\e[0m\]"
 
-  # Check if the current directory is a git repository.
-  local git_branch=$(git branch --show-current 2> /dev/null)
-  if [ -n "$git_branch" ]; then
-    # Style the branch name to insert into the prompt string.
-    git_branch="($git_branch) "
+  if [ "$exit_code" -eq 0 ]; then
+    local EXIT_CODE_INDICATOR="$GREEN●$RESET"
+  else
+    local EXIT_CODE_INDICATOR="$RED● $exit_code$RESET"
   fi
 
-  case "$PWD" in
-    ${HOME}*)
-      # User's home directory.
-      # Replace the leading part of the path that matches $HOME with a ~
-      if [ "$color_prompt" == "yes" ]
-      then
-        export PS1="$BLUELIGHT~${PWD/$HOME/}$CLR $git_branch$ "
-      else
-        export PS1="~${PWD/$HOME/} $git_branch$ "
-      fi
+  case "$repository_state" in
+    "dirty")
+      local GIT_STATUS_INDICATOR="$RED●$RESET"
+      ;;
+    "unpushed")
+      local GIT_STATUS_INDICATOR="$YELLOW●$RESET"
+      ;;
+    "clean")
+      local GIT_STATUS_INDICATOR="$GREEN●$RESET"
       ;;
     *)
-      # Anywhere else. Leave directory as-is.
-      if [ "$color_prompt" == "yes" ]
-      then
-        export PS1="$BLUELIGHT$PWD$CLR $git_branch$ "
-      else
-        export PS1="$PWD $git_branch$ "
-      fi
+      local GIT_STATUS_INDICATOR="$WHITE●$RESET"
       ;;
-   esac
+  esac
+
+  export PS1="$EXIT_CODE_INDICATOR $BLUELIGHT$current_directory$RESET ${git_head:+"($git_head $GIT_STATUS_INDICATOR) "}$ "
+}
+
+set_plain_prompt() {
+  local exit_code="$1"
+  local git_head="$2"
+  local repository_state="$3"
+
+  export PS1="[$exit_code] $current_directory ${git_head:+"($git_head -> $repository_state) "}$ "
 }
