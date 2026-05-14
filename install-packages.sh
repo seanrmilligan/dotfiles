@@ -51,6 +51,7 @@ fi
 
 apt install        \
   gcc              \
+  gh               \
   ghostty          \
   gnome-keyring    \
   gpg              \
