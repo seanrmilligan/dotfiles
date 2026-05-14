@@ -1,2 +1,3 @@
 background = #000000
 command = /bin/bash --login
+font-family = "JetBrains Mono"
