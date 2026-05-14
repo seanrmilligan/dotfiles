@@ -67,7 +67,7 @@ apt install        \
 if ! command -v subl &> /dev/null; then
   install_key \
     "https://download.sublimetext.com/sublimehq-pub.gpg" \
-    "/usr/share/keyrings/sublimehq.gpg"
+    "/etc/apt/keyrings/sublimehq.gpg"
 
   configure_source "sublime-text.sources"
 
@@ -81,7 +81,7 @@ if ! command -v code &> /dev/null
 then
   install_key \
     "https://packages.microsoft.com/keys/microsoft.asc" \
-    "/usr/share/keyrings/microsoft.gpg"
+    "/etc/apt/keyrings/microsoft.gpg"
 
   configure_source "vscode.sources"
 
