@@ -89,3 +89,22 @@ then
 
   apt install code
 fi
+
+# Install Docker
+if ! command -v docker &> /dev/null
+then
+  install_key \
+    "https://download.docker.com/linux/ubuntu/gpg" \
+    "/etc/apt/keyrings/docker.gpg"
+
+  configure_source "docker.sources"
+
+  apt update
+
+  apt install             \
+    docker-ce             \
+    docker-ce-cli         \
+    containerd.io         \
+    docker-buildx-plugin  \
+    docker-compose-plugin
+fi
