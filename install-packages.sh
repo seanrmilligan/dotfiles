@@ -51,6 +51,7 @@ fi
 
 apt install        \
   gcc              \
+  gh               \
   ghostty          \
   gnome-keyring    \
   gpg              \
@@ -66,7 +67,7 @@ apt install        \
 if ! command -v subl &> /dev/null; then
   install_key \
     "https://download.sublimetext.com/sublimehq-pub.gpg" \
-    "/usr/share/keyrings/sublimehq.gpg"
+    "/etc/apt/keyrings/sublimehq.gpg"
 
   configure_source "sublime-text.sources"
 
@@ -80,11 +81,30 @@ if ! command -v code &> /dev/null
 then
   install_key \
     "https://packages.microsoft.com/keys/microsoft.asc" \
-    "/usr/share/keyrings/microsoft.gpg"
+    "/etc/apt/keyrings/microsoft.gpg"
 
   configure_source "vscode.sources"
 
   apt update
 
   apt install code
+fi
+
+# Install Docker
+if ! command -v docker &> /dev/null
+then
+  install_key \
+    "https://download.docker.com/linux/ubuntu/gpg" \
+    "/etc/apt/keyrings/docker.gpg"
+
+  configure_source "docker.sources"
+
+  apt update
+
+  apt install             \
+    docker-ce             \
+    docker-ce-cli         \
+    containerd.io         \
+    docker-buildx-plugin  \
+    docker-compose-plugin
 fi
