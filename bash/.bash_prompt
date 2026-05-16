@@ -1,5 +1,109 @@
 #!/usr/bin/env bash
 
+# ##############################################################################
+# GIT
+# ##############################################################################
+
+is_repository() {
+  git rev-parse --is-inside-work-tree > /dev/null 2>&1
+}
+
+get_commit_branch_or_hash() {
+    # Get an identifier for the current commit:
+    #   - the current branch, or
+    #   - the commit hash (if we are in a detached HEAD state.)
+    # Even in the case of a newly initialized, empty repository, this will still
+    # point to the default branch such as master or main, but not a real commit.
+
+    git symbolic-ref --short -q HEAD || # current branch
+    git rev-parse --short HEAD 2>/dev/null # commit hash
+}
+
+get_latest_commit_hash() {
+  local hash_algo=$(git rev-parse --show-object-format)
+  local empty_commit_hash=""
+
+  # For a given hashing algorithm, git has a static, well known hash for
+  # representing a newly initialized repository with no commits.
+  case "$hash_algo" in
+    "sha1")
+      empty_commit_hash="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+      ;;
+    "sha256")
+      empty_commit_hash="6efc71244b74872f232490b39678e71869e90479b634c03847f938d825c4e976"
+      ;;
+  esac
+
+  # HEAD may either point to a valid commit (common case), or to nothing.
+  # If it points to nothing, it is because the repository is newly initialized
+  # and has no commits. In this case we set the latest commit hash to the well-
+  # known empty repository hash.
+  git rev-parse --verify HEAD 2>/dev/null ||
+    echo "$empty_commit_hash"
+}
+
+has_unpushed_commits() {
+  # Check for unpushed commits.
+  # Verify HEAD exists to prevent errors in empty repositories.
+  # We are considered "unpushed" if:
+  #   - There is no upstream configured (e.g., a newly created local branch).
+  #   - We are ahead of the configured upstream branch.
+  if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    if ! git rev-parse --verify @{upstream} >/dev/null 2>&1 ||
+        [ "$(git rev-list --count @{upstream}..HEAD 2>/dev/null)" -gt 0 ]; then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+has_untracked_files() {
+  # Check for untracked files.
+  # Untracked files are treated differently than tracked files, but for our
+  # purposes we want to treat the state of the repository as "dirty".
+  # Pipe to `head` to exit early. Non-zero output length is sufficient to say
+  # that there are untracked files, so we only need one line for proof.
+  local untracked_files=$(
+    git ls-files --others --exclude-standard |
+    head -n 1
+    )
+  [ -n "$untracked_files" ]
+}
+
+get_repository_state() {
+  # Refresh the git index.
+  # This eliminates false positives from files that have a more recent last
+  # modified time than git knows about, yet no content diff.
+  git update-index -q --refresh
+
+  if has_untracked_files; then
+    # There are untracked files; the repository is dirty.
+    echo "dirty"
+    return 0
+  fi
+
+  if ! git diff-index --quiet "$(get_latest_commit_hash)" --; then
+    # There are changes in tracked files; the repository is dirty.
+    echo "dirty"
+    return 0
+  fi
+
+  if has_unpushed_commits; then
+    # There are unpushed changes or an unpushed new branch.
+    echo "unpushed"
+    return 0
+  fi
+
+  # All changes have been committed and pushed; the repository is clean.
+  echo "clean"
+  return 0
+}
+
+# ##############################################################################
+# THE PROMPT
+# ##############################################################################
+
 # Create a basic prompt
 #
 # Prompt color ranges:
@@ -31,26 +135,13 @@
 # \w working directory
 set_prompt() {
   local exit_code="$1"
+  local commit_name=""
+  local repository_state=""
 
   # Check if the current directory is a git repository.
-  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    # Get the current branch, or the commit hash if we are in a detached HEAD state.
-    local git_head
-    git_head=$(
-      git symbolic-ref --short -q HEAD || # current branch
-      git rev-parse --short HEAD # commit hash if we're in a detached HEAD state.
-      )
-
-    # Check if the repository has uncommitted or unstaged changes
-    # Refresh the git index. This eliminates false positives from files that have a more recent last-touched time, but no content diff.
-    git update-index -q --refresh
-    if ! git diff-index --quiet HEAD --; then
-      local repository_state="dirty"
-    elif [ "$(git rev-parse @)" != "$(git rev-parse "@{upstream}")" ]; then
-      local repository_state="unpushed"
-    else
-      local repository_state="clean"
-    fi
+  if is_repository; then
+    commit_name=$(get_commit_branch_or_hash)
+    repository_state=$(get_repository_state)
   fi
 
   case "$PWD" in
@@ -70,10 +161,10 @@ set_prompt() {
     xterm-color   | \
     xterm-ghostty | \
     *-256color    )
-      set_color_prompt "$exit_code" "$git_head" "$repository_state"
+      set_color_prompt "$exit_code" "$commit_name" "$repository_state"
       ;;
     *)
-      set_plain_prompt "$exit_code" "$git_head" "$repository_state"
+      set_plain_prompt "$exit_code" "$commit_name" "$repository_state"
       ;;
   esac
 }
