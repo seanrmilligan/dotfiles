@@ -136,9 +136,10 @@ shopt -s globstar
 
 # -F: Automatically quit when the content is less than the screen height.
 # -N: Show line numbers.
+# -Q: Do not ring the bell upon scrolling to the beginning or end of the file.
 # -R: Print ANSI control characters to enable shell syntax highlighting.
 # -S: Prefer horizontal scrolling over line wrapping.
 if [ -x /usr/bin/source-highlight ]; then
   export LESSOPEN="|/usr/share/source-highlight/src-hilite-lesspipe.sh %s"
-  export LESS="-F -N -R -S"
+  export LESS="-F -N -Q -R -S"
 fi
