@@ -1,31 +1,185 @@
-# #############################################################################
+#!/usr/bin/env bash
+
+# ##############################################################################
 # If not running interactively, skip this file
-# #############################################################################
+# ##############################################################################
 case $- in
   *i*) ;;
     *) return;;
 esac
 
-# #############################################################################
-# IMPORTS
-# #############################################################################
+# ##############################################################################
+# UTILITY FUNCTIONS
+# ##############################################################################
 
-# Load aliases from a separate file.
-if [ -f "$HOME/.bash_aliases" ]; then
-  source "$HOME/.bash_aliases"
-fi
+err() {
+  echo "$*" >&2
+}
 
-if [ -f "$HOME/.bash_prompt" ]; then
-  source "$HOME/.bash_prompt"
-fi
+is_valid_directory() {
+  # Declare a nameref to capture the name of the environment variable passed.
+  declare -n ENV_VARIABLE=$1
 
-if [ -f "$HOME/.bash_workspaces" ]; then
-  source "$HOME/.bash_workspaces"
-fi
+  if [ -z "$ENV_VARIABLE" ]; then
+    err "${!ENV_VARIABLE} is not set."
+    return 1
+  fi
 
-# #############################################################################
+  if [ ! -e "$ENV_VARIABLE" ]; then
+
+    err "${!ENV_VARIABLE} ($ENV_VARIABLE) directory does not exist."
+    return 2
+  fi
+
+  if [ ! -d "$ENV_VARIABLE" ]; then
+    err "${!ENV_VARIABLE} ($ENV_VARIABLE) is not a directory."
+    return 3
+  fi
+
+  return 0
+}
+
+
+# ##############################################################################
+# WORKSPACES
+# ##############################################################################
+
+export WORKSPACE_ROOT="$HOME/projects"
+
+cdw() {
+  if ! is_valid_directory WORKSPACE_ROOT; then
+    return $?
+  fi
+
+  if [ -d "$WORKSPACE_ROOT/$1" ]; then
+    cd "$WORKSPACE_ROOT/$1"
+  else
+    err "No such workspace '$1'"
+  fi
+}
+
+lsw() {
+  if ! is_valid_directory WORKSPACE_ROOT; then
+    return $?
+  fi
+
+  find "$WORKSPACE_ROOT" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"
+}
+
+rmw() {
+  if ! is_valid_directory WORKSPACE_ROOT; then
+    return $?
+  fi
+
+  if [ -d "$WORKSPACE_ROOT/$1" ]; then
+    rm -rf "${WORKSPACE_ROOT}/$1"
+  fi
+}
+
+
+# ##############################################################################
+# GIT
+# ##############################################################################
+
+is_repository() {
+  git rev-parse --is-inside-work-tree > /dev/null 2>&1
+}
+
+get_commit_branch_or_hash() {
+  # Get an identifier for the current commit:
+  #   - the current branch, or
+  #   - the commit hash (if we are in a detached HEAD state.)
+  # Even in the case of a newly initialized, empty repository, this will still
+  # point to the default branch such as master or main, but not a real commit.
+
+  git symbolic-ref --short -q HEAD || # current branch
+  git rev-parse --short HEAD 2>/dev/null # commit hash
+}
+
+get_latest_commit_hash() {
+  local hash_algo=$(git rev-parse --show-object-format)
+  local empty_commit_hash=""
+
+  # For a given hashing algorithm, git has a static, well known hash for
+  # representing a newly initialized repository with no commits.
+  case "$hash_algo" in
+    "sha1")
+      empty_commit_hash="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+      ;;
+    "sha256")
+      empty_commit_hash="6efc71244b74872f232490b39678e71869e90479b634c03847f938d825c4e976"
+      ;;
+  esac
+
+  # HEAD may either point to a valid commit (common case), or to nothing.
+  # If it points to nothing, it is because the repository is newly initialized
+  # and has no commits. In this case we set the latest commit hash to the well-
+  # known empty repository hash.
+  git rev-parse --verify HEAD 2>/dev/null ||
+    echo "$empty_commit_hash"
+}
+
+has_unpushed_commits() {
+  # Check for unpushed commits.
+  # Verify HEAD exists to prevent errors in empty repositories.
+  # We are considered "unpushed" if:
+  #   - There is no upstream configured (e.g., a newly created local branch).
+  #   - We are ahead of the configured upstream branch.
+  if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    if ! git rev-parse --verify @{upstream} >/dev/null 2>&1 ||
+        [ "$(git rev-list --count @{upstream}..HEAD 2>/dev/null)" -gt 0 ]; then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+has_untracked_files() {
+  # Check for untracked files.
+  # Untracked files are treated differently than tracked files, but for our
+  # purposes we want to treat the state of the repository as "dirty".
+  # Pipe to `head` to exit early. Non-zero output length is sufficient to say
+  # that there are untracked files, so we only need one line for proof.
+  local untracked_files=$(
+    git ls-files --others --exclude-standard |
+    head -n 1
+    )
+  [ -n "$untracked_files" ]
+}
+
+get_repository_state() {
+  # Refresh the git index.
+  # This eliminates false positives from files that have a more recent last
+  # modified time than git knows about, yet no content diff.
+  git update-index -q --refresh
+
+  if has_untracked_files; then
+    # There are untracked files; the repository is dirty.
+    echo "dirty"
+    return 0
+  fi
+
+  if ! git diff-index --quiet "$(get_latest_commit_hash)" --; then
+    # There are changes in tracked files; the repository is dirty.
+    echo "dirty"
+    return 0
+  fi
+
+  if has_unpushed_commits; then
+    # There are unpushed changes or an unpushed new branch.
+    echo "unpushed"
+    return 0
+  fi
+
+  # All changes have been committed and pushed; the repository is clean.
+  echo "clean"
+  return 0
+}
+
+# ##############################################################################
 # HISTORY SETTINGS
-# #############################################################################
+# ##############################################################################
 
 # Control what goes into the bash history. Colon-separated list.
 # Options:
@@ -59,9 +213,9 @@ HISTFILESIZE=20000
 # [YYYY-MM-DD HH:MM:SS-ZZZZ]
 HISTTIMEFORMAT="[%F %T%z] "
 
-# #############################################################################
+# ##############################################################################
 # TMUX
-# #############################################################################
+# ##############################################################################
 
 set_tmux_pane_title() {
   if [ -n "$TMUX" ]; then
@@ -75,17 +229,148 @@ set_tmux_window_name() {
   fi
 }
 
-# #############################################################################
+# ##############################################################################
 # THE PROMPT
-# #############################################################################
+# ##############################################################################
 
-# Bash executes the PROMPT_COMMAND env variable before each new prompt.
-# Before each new prompt, do the following:
+# Create the prompt
+# Special values:
+# \u user
+# \h hostname
+# \w working directory
+set_prompt() {
+  local exit_code="$1"
+  local commit_name=""
+  local repository_state=""
+
+  # Check if the current directory is a git repository.
+  if is_repository; then
+    commit_name=$(get_commit_branch_or_hash)
+    repository_state=$(get_repository_state)
+  fi
+
+  case "$PWD" in
+    ${WORKSPACE_ROOT}/*)
+      # The root directory for projects.
+      # Format paths in $WORKSPACE_ROOT as @workspace/
+      local current_directory="@${PWD/$WORKSPACE_ROOT\//}"
+      ;;
+    ${HOME}*)
+      # User's home directory.
+      # Format paths in $HOME as ~/ instead of /home/$(whoami)
+      local current_directory="~${PWD/$HOME/}"
+      ;;
+    *)
+      # Anywhere else. Leave directory as-is.
+      local current_directory="$PWD"
+      ;;
+  esac
+
+  # If TERM is set to a color-enabled terminal, turn on the color prompt.
+  case "$TERM" in
+    xterm-color   | \
+    xterm-ghostty | \
+    *-256color    )
+      set_color_prompt "$exit_code" "$commit_name" "$repository_state"
+      ;;
+    *)
+      set_plain_prompt "$exit_code" "$commit_name" "$repository_state"
+      ;;
+  esac
+}
+
+# Prompt color ranges:
+# 30-37 foreground
+# 40-47 background
+# 90-97 high intensity foreground
+# 100-107 high intensity background
+#
+# Prompt colors:
+# 0 - Black
+# 1 - Red
+# 2 - Green
+# 3 - Yellow
+# 4 - Blue
+# 5 - Purple
+# 6 - Cyan
+# 7 - White
+#
+# Bold bit:
+# 0 - Normal
+# 1 - Bold
+#
+# Format:
+# \[\e[BOLD_BIT;COLOR\]
+
+set_color_prompt() {
+  local exit_code="$1"
+  local git_head="$2"
+  local repository_state="$3"
+
+  local BLACK="\[\e[0;30m\]"
+  local BLACKBOLD="\[\e[1;30m\]"
+  local RED="\[\e[0;31m\]"
+  local REDBOLD="\[\e[1;31m\]"
+  local REDLIGHT="\[\e[0;91m\]"
+  local GREEN="\[\e[0;32m\]"
+  local GREENBOLD="\[\e[1;32m\]"
+  local GREENLIGHT="\[\e[0;92m\]"
+  local YELLOW="\[\e[0;33m\]"
+  local YELLOWBOLD="\[\e[1;33m\]"
+  local BLUE="\[\e[0;34m\]"
+  local BLUEBOLD="\[\e[1;34m\]"
+  local BLUELIGHT="\[\e[0;94m\]"
+  local PURPLE="\[\e[0;35m\]"
+  local PURPLEBOLD="\[\e[1;35m\]"
+  local CYAN="\[\e[0;36m\]"
+  local CYANBOLD="\[\e[1;36m\]"
+  local WHITE="\[\e[0;37m\]"
+  local WHITEBOLD="\[\e[1;37m\]"
+  local RESET="\[\e[0m\]"
+
+  if [ "$exit_code" -eq 0 ]; then
+    local EXIT_CODE_INDICATOR="$GREEN●$RESET"
+  else
+    local EXIT_CODE_INDICATOR="$RED● $exit_code$RESET"
+  fi
+
+  case "$repository_state" in
+    "dirty")
+      local GIT_STATUS_INDICATOR="$RED●$RESET"
+      ;;
+    "unpushed")
+      local GIT_STATUS_INDICATOR="$YELLOW●$RESET"
+      ;;
+    "clean")
+      local GIT_STATUS_INDICATOR="$GREEN●$RESET"
+      ;;
+    *)
+      local GIT_STATUS_INDICATOR="$WHITE●$RESET"
+      ;;
+  esac
+
+  export PS1="$EXIT_CODE_INDICATOR $BLUELIGHT$current_directory$RESET ${git_head:+"($git_head $GIT_STATUS_INDICATOR) "}$ "
+}
+
+set_plain_prompt() {
+  local exit_code="$1"
+  local git_head="$2"
+  local repository_state="$3"
+
+  export PS1="[$exit_code] $current_directory ${git_head:+"($git_head -> $repository_state) "}$ "
+}
+
+# ##############################################################################
+# POST-COMMAND HOOKS
+# ##############################################################################
+
+# Bash executes the PROMPT_COMMAND env variable after each command is run.
+# This makes it useful as a post-command hook. After each command:
 #   1. Append the previously run command to the end of the HISTFILE. This
 #      shares the current shell session's commands with other sessions.
 #   2. Read the contents of HISTFILE into the current shell session's history.
-#      This keeps the shell up to date with what other sessions have shared.
-#   3. Execute set_prompt (see .bash_prompt) to generate the prompt string.
+#      This keeps the shell up to date with what other sessions have written.
+#   3. Execute set_prompt to generate the prompt string.
 #   4. If inside tmux, display the exit code of the last command in the title.
 prompt_command() {
   # Commands in this function alter $? and $PIPESTATUS.
@@ -102,17 +387,17 @@ prompt_command() {
 
 PROMPT_COMMAND='prompt_command'
 
-# #############################################################################
+# ##############################################################################
 # WINDOW SETTINGS
-# #############################################################################
+# ##############################################################################
 
 # Check the window size after each command.
 # Updates the values of LINES and COLUMNS with the new window dimensions.
 shopt -s checkwinsize
 
-# #############################################################################
+# ##############################################################################
 # BASH COMPLETION
-# #############################################################################
+# ##############################################################################
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     source /usr/share/bash-completion/bash_completion
@@ -125,22 +410,46 @@ fi
 # match all files and zero or more directories and subdirectories.
 shopt -s globstar
 
+# ##############################################################################
+# PAGER
+# ##############################################################################
+
+export PAGER="less"
+
+# The successor to `more`, because as they say, `less` is `more`.
+
 # `less`, one of the most popular tools for browsing file contents, only
 # handles text files well by default. More advanced file formats often contain
 # text as well, just in an enriched or binary form.
 #
 # `lesspipe` helps make `less` more friendly for non-text files which still
 # have text embedded, such as PDFs and zipped/compressed files.
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+if [ -x /usr/bin/lesspipe ]; then
+  eval "$(SHELL=/bin/sh lesspipe)"
+fi
 
 
 # -F: Automatically quit when the content is less than the screen height.
 # -N: Show line numbers.
+# -Q: Do not ring the bell upon scrolling to the beginning or end of the file.
 # -R: Print ANSI control characters to enable shell syntax highlighting.
 # -S: Prefer horizontal scrolling over line wrapping.
 if [ -x /usr/bin/source-highlight ]; then
   export LESSOPEN="|/usr/share/source-highlight/src-hilite-lesspipe.sh %s"
-  export LESS="-F -N -R -S"
+  export LESS="-F -N -Q -R -S"
+fi
+
+# ##############################################################################
+#  BASH ALIASES
+# ##############################################################################
+
+if [ -x /usr/bin/dircolors ]; then
+  alias ls='ls --color=auto'
+  alias dir='dir --color=auto'
+  alias vdir='vdir --color=auto'
+  alias grep='grep --color=auto'
+  alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
 fi
 
 export NVM_DIR="$HOME/.config/nvm"
