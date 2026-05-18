@@ -250,6 +250,11 @@ set_prompt() {
   fi
 
   case "$PWD" in
+    ${WORKSPACE_ROOT}/*)
+      # The root directory for projects.
+      # Format paths in $WORKSPACE_ROOT as @workspace/
+      local current_directory="@${PWD/$WORKSPACE_ROOT\//}"
+      ;;
     ${HOME}*)
       # User's home directory.
       # Format paths in $HOME as ~/ instead of /home/$(whoami)
