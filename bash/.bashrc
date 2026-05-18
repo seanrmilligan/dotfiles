@@ -125,6 +125,14 @@ fi
 # match all files and zero or more directories and subdirectories.
 shopt -s globstar
 
+# ##############################################################################
+# PAGER
+# ##############################################################################
+
+export PAGER="less"
+
+# The successor to `more`, because as they say, `less` is `more`.
+
 # `less`, one of the most popular tools for browsing file contents, only
 # handles text files well by default. More advanced file formats often contain
 # text as well, just in an enriched or binary form.
