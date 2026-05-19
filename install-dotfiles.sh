@@ -25,7 +25,7 @@ done
 # corresponding program, we don't end up with a symlinked directory. This avoids
 # files being written back to the repository as the app creates caches, logs,
 # etc. in its (symlinked) folder.
-mkdir --parents $HOME/.config/ghostty
+mkdir --parents $HOME/.config/
 mkdir --parents $HOME/.config/lxqt
 mkdir --parents $HOME/.config/pcmanfm-qt/lxqt
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
