@@ -58,6 +58,7 @@ apt install        \
   jq               \
   make             \
   shellcheck       \
+  sl               \
   source-highlight \
   stow             \
   tmux             \
