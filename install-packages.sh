@@ -50,6 +50,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 apt install        \
+  bat              \
   gcc              \
   gh               \
   ghostty          \
@@ -58,6 +59,7 @@ apt install        \
   jq               \
   make             \
   shellcheck       \
+  sl               \
   source-highlight \
   stow             \
   tmux             \

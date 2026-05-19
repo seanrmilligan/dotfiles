@@ -1,5 +1,5 @@
-background = #000000
 command = /bin/bash --login
-font-family = "JetBrains Mono"
 cursor-style = underline
 cursor-style-blink = false
+font-family = "JetBrains Mono"
+theme = rose-pine.conf
