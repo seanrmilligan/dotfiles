@@ -440,6 +440,24 @@ if [ -x /usr/bin/source-highlight ]; then
 fi
 
 # ##############################################################################
+# BATCAT
+# ##############################################################################
+
+# The tool `batcat` occupies a space somewhere between "enhanced `cat`" (insofar
+# as `cat` gets used improperly to print contents to the console rather than its
+# original purpose to concatenate files) and  "`less` but  without having to
+# configure as much." It applies syntax highlighting, adds line numbers and a
+# header, and feeds that into the PAGER for viewing.
+
+# Let `bat` invoke `batcat`, over a conflicting package of the same name.
+alias bat='batcat'
+
+# Override the settings for `less` set in the PAGER section.
+# As `batcat` provides built-in line numbering and syntax highlighting, we don't
+# need `less` to also apply the same when used as the PAGER for `batcat`.
+export BAT_PAGER="less -F -n -Q -S"
+
+# ##############################################################################
 #  BASH ALIASES
 # ##############################################################################
 
