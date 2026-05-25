@@ -78,20 +78,6 @@ if ! command -v subl &> /dev/null; then
   apt install sublime-text sublime-merge
 fi
 
-# Install VS Code
-if ! command -v code &> /dev/null
-then
-  install_key \
-    "https://packages.microsoft.com/keys/microsoft.asc" \
-    "/etc/apt/keyrings/microsoft.gpg"
-
-  configure_source "vscode.sources"
-
-  apt update
-
-  apt install code
-fi
-
 # Install Docker
 if ! command -v docker &> /dev/null
 then
