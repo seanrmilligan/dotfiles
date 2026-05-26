@@ -26,7 +26,6 @@ is_valid_directory() {
   fi
 
   if [ ! -e "$ENV_VARIABLE" ]; then
-
     err "${!ENV_VARIABLE} ($ENV_VARIABLE) directory does not exist."
     return 2
   fi
@@ -38,7 +37,6 @@ is_valid_directory() {
 
   return 0
 }
-
 
 # ##############################################################################
 # WORKSPACES
@@ -76,6 +74,53 @@ rmw() {
   fi
 }
 
+_cdw_autocomplete() {
+    # COMP_WORDS is the array of words typed into the current prompt
+    # COMP_CWORD is the index of the current word
+    local current_word="${COMP_WORDS[COMP_CWORD]}"
+
+    # Determine:
+    #   - $relative_path: the path under $WORKSPACE_ROOT completed so far.
+    #   - $next_path_segment: the next partially completed part of the path.
+    # If no slash was typed, the relative path is empty. The next path segment
+    #   is the current word (e.g. "dotfi"). This only happens in the
+    #   $WORKSPACE_ROOT.
+    # Otherwise, the relative path is everything up to the final slash
+    #   ("dotfiles/") while the next path segment is the part after the last
+    #   slash (e.g., "gi" in "dotfiles/gi"). This happens in subdirectories of
+    #   $WORKSPACE_ROOT
+
+    if [ "${current_word#*/*}" = "$current_word" ]; then
+      local relative_path=""
+      local next_path_segment="$current_word"
+    else
+      local relative_path="${current_word%/*}"
+      local next_path_segment="${current_word##*/}"
+    fi
+
+    # Change to the $WORKSPACE_ROOT in a subshell.
+    #
+    # There, generate suggestions as if we were prompting for autocomplete in
+    # the $WORKSPACE_ROOT. If we have already completed some amount of a path,
+    # the $relative_path will be non-empty, so append a slash and the path.
+    # This will allow us to generate suggestions for the $next_path_segment.
+    #
+    # Return the suggestions as an array so that `cdw` can have autocomplete
+    # for the $WORKSPACE_ROOT while in any directory. Place the $relative_path
+    # stripped off earlier back on so that the accepted suggestion uses the
+    # entire construction ("dotfiles/git/") not just the suggestion for the
+    # $next_path_segment ("gi" -> "git/").
+    #
+    # See `man bash` for more on mapfile and compgen.
+    mapfile -t COMPREPLY < <(
+      cd "$WORKSPACE_ROOT${relative_path:+/$relative_path}" 2>/dev/null &&
+      compgen -d -S/ -- "$next_path_segment" |
+        sed "s|^|${relative_path:+$relative_path/}|"
+    )
+}
+
+# Register _cdw_autocomplete as the autocomplete for `cdw`
+complete -o nospace -F _cdw_autocomplete cdw
 
 # ##############################################################################
 # GIT
