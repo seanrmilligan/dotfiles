@@ -118,7 +118,7 @@ then
   chrome_installer="$TMPDIR/google-chrome-stable.deb"
 
   curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    --location
+    --location \
     --output="$chrome_installer"
 
   apt install "$chrome_installer"
