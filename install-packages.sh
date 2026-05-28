@@ -52,6 +52,7 @@ fi
 apt install        \
   bat              \
   gcc              \
+  gdb              \
   gh               \
   ghostty          \
   gnome-keyring    \
@@ -109,4 +110,34 @@ then
     containerd.io         \
     docker-buildx-plugin  \
     docker-compose-plugin
+fi
+
+# Install Google Chrome
+if ! command -v google-chrome-stable &> /dev/null
+then
+  chrome_installer="$TMPDIR/google-chrome-stable.deb"
+
+  curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    --location
+    --output="$chrome_installer"
+
+  apt install "$chrome_installer"
+fi
+
+# Install GitKraken
+# GitKraken will not register with apt for automatic updates, so we do not guard
+# against its binary already being configured. Instead we run this every time.
+# Check that gitkraken is not running to prevent any disruption. (This is
+# implicitly checked for the others when we see if the binary is installed.)
+if pgrep -x "gitkraken" > /dev/null
+then
+  err "GitKraken is open. Close it before updating."
+else
+  gitkraken_installer="$TMPDIR/gitkraken-amd64.deb"
+
+  curl https://release.gitkraken.com/linux/gitkraken-amd64.deb \
+    --location                                                 \
+    --output="$gitkraken_installer"
+
+  apt install "$gitkraken_installer"
 fi
