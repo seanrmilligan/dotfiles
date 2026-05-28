@@ -110,3 +110,15 @@ then
     docker-buildx-plugin  \
     docker-compose-plugin
 fi
+
+# Install Google Chrome
+if ! command -v google-chrome-stable &> /dev/null
+then
+  chrome_installer="$TMPDIR/google-chrome-stable.deb"
+
+  curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    --location
+    --output="$chrome_installer"
+
+  apt install "$chrome_installer"
+fi
