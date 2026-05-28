@@ -52,6 +52,7 @@ fi
 apt install        \
   bat              \
   gcc              \
+  gdb              \
   gh               \
   ghostty          \
   gnome-keyring    \
