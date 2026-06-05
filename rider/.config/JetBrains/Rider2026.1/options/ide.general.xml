@@ -1,6 +1,7 @@
 <application>
   <component name="GeneralSettings">
     <option name="reopenLastProject" value="false" />
+    <option name="confirmExit" value="false" />
     <option name="confirmOpenNewProject2" value="-1" />
   </component>
   <component name="Registry">
@@ -11,5 +12,6 @@
     <entry key="rider.codeVision.fitToContent.enabled" value="true" source="SYSTEM" />
     <entry key="rider.codeVision.zeroWidth.preload.enabled" value="true" source="SYSTEM" />
     <entry key="rider.debugger.dotnet.mixed.mode.enabled" value="true" source="SYSTEM" />
+    <entry key="editor.ux.survey.enabled" value="false" source="MANAGER" />
   </component>
 </application>
