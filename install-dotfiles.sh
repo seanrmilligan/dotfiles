@@ -30,24 +30,26 @@ mkdir --parents $HOME/.config/lxqt
 mkdir --parents $HOME/.config/pcmanfm-qt/lxqt
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
 mkdir --parents $HOME/.config/terminator
+mkdir --parents $HOME/.local/bin
 
 # Stow will not set up symlinks for the files we wish to install if they already
 # exist locally. The --adopt flag tells Stow to take in the local file over our
 # version, making it safe to set up the symlink. We then revert any changes this
 # introduced -- we do want to install our version of the file, after all.
 stow --adopt --dir=$HOME/dotfiles --target=$HOME \
-  bash       \
-  gdb        \
-  ghostty    \
-  git        \
-  lxqt       \
-  nano       \
-  pcmanfm    \
-  profile    \
-  ssh        \
-  sublime    \
-  terminator \
-  tmux       \
+  bash          \
+  gdb           \
+  ghostty       \
+  git           \
+  libnotify-bin \
+  lxqt          \
+  nano          \
+  pcmanfm       \
+  profile       \
+  ssh           \
+  sublime       \
+  terminator    \
+  tmux          \
   vim
 
 git -C $HOME/dotfiles checkout . > /dev/null 2>&1
