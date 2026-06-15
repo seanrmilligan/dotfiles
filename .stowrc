@@ -1,3 +1,4 @@
+--ignore=.*\.sources$
 --ignore=\.git
 --ignore=\.gitignore
 --ignore=\.gitmodules
