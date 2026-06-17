@@ -26,6 +26,8 @@ done
 # files being written back to the repository as the app creates caches, logs,
 # etc. in its (symlinked) folder.
 mkdir --parents $HOME/.config/
+mkdir --parents $HOME/.config/lxqt
+mkdir --parents $HOME/.config/pcmanfm-qt/lxqt
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
 mkdir --parents $HOME/.config/terminator
 
@@ -38,7 +40,9 @@ stow --adopt --dir=$HOME/dotfiles --target=$HOME \
   gdb        \
   ghostty    \
   git        \
+  lxqt       \
   nano       \
+  pcmanfm    \
   profile    \
   ssh        \
   sublime    \
