@@ -1,0 +1,5 @@
+--ignore=.*\.sources$
+--ignore=\.git
+--ignore=\.gitignore
+--ignore=\.gitmodules
+--ignore=^/README\.md
