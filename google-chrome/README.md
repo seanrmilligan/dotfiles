@@ -8,4 +8,14 @@ placed in a well-known location. Policy files are placed in the following:
 - `/etc/opt/google/chrome/policies/managed/`
 - `/etc/opt/google/chrome/policies/recommended/`
 
-Viewing loaded policies in Chrome: chrome://policy
+Viewing loaded policies in Chrome:
+
+```
+chrome://policy
+```
+
+View installed apps in Chrome:
+
+```
+chrome://apps
+```
