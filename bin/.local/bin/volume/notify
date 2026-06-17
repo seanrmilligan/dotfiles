@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# notify -- display the current volume as a desktop notification
+
+set -euo pipefail
+
+# Get the current volume
+# @DEFAULT_AUDIO_SINK@ is a WirePlumber variable for the current output device.
+# @DEFAULT_SINK@ is the PulseAudio equivalent (when using pactl).
+volume_raw="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+
+# wpctl get-volume output looks like
+# - "Volume: 0.45", or
+# - "Volume: 0.45 [MUTED]"
+# Extract the decimal volume and convert to percentage
+#   e.g. "0.45" -> "45"
+volume_decimal="$(echo "$volume_raw" | awk '{print $2}')"
+volume_percent="$(awk "BEGIN {printf \"%.0f\", $volume_decimal * 100}")"
+
+if echo "$volume_raw" | grep --quiet "MUTED"; then
+  muted=true
+else
+  muted=false
+fi
+
+if [ "$muted" = true ]; then
+  icon="audio-volume-muted"
+  summary="Volume Muted"
+  body=""
+else
+  if [ "$volume_percent" -eq 0 ]; then
+    icon="audio-volume-muted"
+  elif [ "$volume_percent" -le 33 ]; then
+    icon="audio-volume-low"
+  elif [ "$volume_percent" -le 66 ]; then
+    icon="audio-volume-medium"
+  else
+    icon="audio-volume-high"
+  fi
+  summary="Volume ${volume_percent}%"
+  body=""
+fi
+
+notify-send                                            \
+  --app-name="Volume"                                  \
+  --icon="$icon"                                       \
+  --hint=int:value:"$volume_percent"                   \
+  --hint=string:x-canonical-private-synchronous:volume \
+  --expire-time=1500                                   \
+  "$summary" "$body"
