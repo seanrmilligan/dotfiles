@@ -1,0 +1,14 @@
+{
+  "WebAppInstallForceList": [
+    {
+      "url": "https://todoist.com",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://music.youtube.com",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    }
+  ]
+}
