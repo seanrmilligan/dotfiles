@@ -585,6 +585,33 @@ alias bat='batcat'
 export BAT_PAGER="less -F -n -Q -S"
 
 # ##############################################################################
+# VS CODE
+# ##############################################################################
+
+code() {
+  # Intercept invocations of VS Code.
+  #
+  # If the directory passed to VS Code contains exactly one `*.code-workspace`
+  # file, open the `*.code-workspace` file instead of the directory itself.
+  #
+  # Only intercept the unambiguous case: a single argument.
+  # e.g.: `code .`, `code ~/projects/dotfiles`, etc.
+  #
+  # Any other invocation (non-directory argument, or with flags and options) is
+  # passed through to VS Code untouched.
+  if [ "$#" -eq 1 ] && [ -d "$1" ]; then
+    local -a workspace_files
+    mapfile -t workspace_files < <(find "$1" -maxdepth 1 -name "*.code-workspace" 2>/dev/null)
+    if [ "${#workspace_files[@]}" -eq 1 ]; then
+      command code "${workspace_files[0]}"
+      return
+    fi
+  fi
+
+  command code "$@"
+}
+
+# ##############################################################################
 #  BASH ALIASES
 # ##############################################################################
 
