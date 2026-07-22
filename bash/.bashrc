@@ -123,6 +123,88 @@ _cdw_autocomplete() {
 complete -o nospace -F _cdw_autocomplete cdw
 
 # ##############################################################################
+# WORKSPACE @ EXPANSION
+# ##############################################################################
+
+# Expand @ at the beginning of a word to $WORKSPACE_ROOT/, similar to how the
+# shell expands ~ to $HOME. The expansion happens inline in the readline buffer
+# so you can see the full path before the command runs.
+#
+# Examples:
+#   cat @dotfiles/.bashrc   →  cat /home/sean/projects/dotfiles/.bashrc
+#   ls @dotfiles/bash/      →  ls /home/sean/projects/bash/
+#
+# Only expands @ at word boundaries (after whitespace or at the start of the
+# line) to avoid mangling patterns like user@host or email addresses.
+
+_expand_workspace_at() {
+  if [[ -z "$WORKSPACE_ROOT" ]]; then
+    return
+  fi
+
+  local line="$READLINE_LINE"
+  local result=""
+  local i=0
+  local len=${#line}
+  local prev_is_space=1  # Start of line counts as a word boundary.
+
+  # Walk the line character by character, replacing @ at word boundaries.
+  while (( i < len )); do
+    local char="${line:i:1}"
+
+    if (( prev_is_space )) && [[ "$char" == "@" ]]; then
+      result+="$WORKSPACE_ROOT/"
+      # Track the cursor shift: we replaced 1 char (@) with N chars.
+      if (( READLINE_POINT > i )); then
+        (( READLINE_POINT += ${#WORKSPACE_ROOT} ))  # +len, -1 for @, +1 for /
+      fi
+    else
+      result+="$char"
+    fi
+
+    if [[ "$char" == " " || "$char" == $'\t' ]]; then
+      prev_is_space=1
+    else
+      prev_is_space=0
+    fi
+
+    (( i++ ))
+  done
+
+  READLINE_LINE="$result"
+}
+
+_expand_workspace_at_and_space() {
+  _expand_workspace_at
+
+  # Insert a space at the cursor position.
+  READLINE_LINE="${READLINE_LINE:0:READLINE_POINT} ${READLINE_LINE:READLINE_POINT}"
+  (( READLINE_POINT++ ))
+}
+
+_expand_workspace_at_and_accept() {
+  _expand_workspace_at
+
+  # Accept the line (simulate pressing Enter). The bind for \C-j below uses
+  # a two-key sequence: first it calls this function via \C-x\C-a, then it
+  # sends \C-j (newline) to actually execute the command. This avoids the
+  # problem where bind -x swallows the keypress.
+  #
+  # This function only performs the expansion; the actual accept-line is
+  # handled by the readline binding below.
+  :
+}
+
+# Bind Space to expand-then-space.
+bind -x '"\C-x\C-s": _expand_workspace_at_and_space'
+bind '"\x20": "\C-x\C-s"'
+
+# Bind Enter to expand-then-accept.
+# \C-x\C-a runs the expansion function, then \C-j (newline) accepts the line.
+bind -x '"\C-x\C-a": _expand_workspace_at_and_accept'
+bind '"\C-m": "\C-x\C-a\C-j"'
+
+# ##############################################################################
 # GIT
 # ##############################################################################
 
