@@ -204,6 +204,105 @@ bind '"\x20": "\C-x\C-s"'
 bind -x '"\C-x\C-a": _expand_workspace_at_and_accept'
 bind '"\C-m": "\C-x\C-a\C-j"'
 
+# Bind Tab to complete @workspace paths without flicker.
+# If the word under the cursor starts with @, handle completion entirely within
+# a single bind -x call using compgen under $WORKSPACE_ROOT. This avoids the
+# intermediate readline redraws that a multi-step expand→complete→collapse macro
+# would cause. For words without @, the function returns without modifying the
+# buffer and readline's built-in complete (chained after in the macro) fires
+# normally.
+
+_at_tab_complete() {
+  local before="${READLINE_LINE:0:READLINE_POINT}"
+  local current_word="${before##* }"
+
+  # At the start of the line there is no leading space to strip.
+  if [[ "$READLINE_POINT" -gt 0 && "$before" != *" "* ]]; then
+    current_word="$before"
+  fi
+
+  # Only handle @-prefixed words.
+  if [[ "$current_word" != @* || -z "$WORKSPACE_ROOT" ]]; then
+    return
+  fi
+
+  local partial="${current_word#@}"
+  local search_dir="$WORKSPACE_ROOT"
+  local dir_part=""
+  local base_part="$partial"
+
+  # Split into directory and basename components for nested paths like
+  # @dotfiles/bash/.ba  →  dir_part="dotfiles/bash"  base_part=".ba"
+  if [[ "$partial" == */* ]]; then
+    dir_part="${partial%/*}"
+    base_part="${partial##*/}"
+    search_dir="$WORKSPACE_ROOT/$dir_part"
+  fi
+
+  # Generate completions (files and directories).
+  local completions=()
+  if [[ -d "$search_dir" ]]; then
+    mapfile -t completions < <(
+      cd "$search_dir" 2>/dev/null &&
+      compgen -f -- "$base_part" | sort
+    )
+  fi
+
+  if [[ ${#completions[@]} -eq 0 ]]; then
+    return
+  fi
+
+  local prefix_part="${READLINE_LINE:0:READLINE_POINT - ${#current_word}}"
+  local after_part="${READLINE_LINE:READLINE_POINT}"
+
+  if [[ ${#completions[@]} -eq 1 ]]; then
+    # Single match — complete it fully.
+    local match="${completions[0]}"
+    local completed="@${dir_part:+$dir_part/}${match}"
+    if [[ -d "$search_dir/$match" ]]; then
+      completed+="/"
+    fi
+    READLINE_LINE="${prefix_part}${completed}${after_part}"
+    READLINE_POINT=$(( ${#prefix_part} + ${#completed} ))
+  else
+    # Multiple matches — complete to the longest common prefix and display
+    # the candidates.
+    local common="${completions[0]}"
+    local comp
+    for comp in "${completions[@]:1}"; do
+      local i=0
+      while (( i < ${#common} && i < ${#comp} )) && \
+            [[ "${common:i:1}" == "${comp:i:1}" ]]; do
+        (( i++ ))
+      done
+      common="${common:0:i}"
+    done
+
+    local completed="@${dir_part:+$dir_part/}${common}"
+    READLINE_LINE="${prefix_part}${completed}${after_part}"
+    READLINE_POINT=$(( ${#prefix_part} + ${#completed} ))
+
+    # Print candidates below the prompt. Append / to directories for clarity.
+    local display=()
+    local c
+    for c in "${completions[@]}"; do
+      if [[ -d "$search_dir/$c" ]]; then
+        display+=("$c/")
+      else
+        display+=("$c")
+      fi
+    done
+
+    echo
+    printf '%s\n' "${display[@]}" | column 2>/dev/null ||
+      printf '%s\n' "${display[@]}"
+  fi
+}
+
+bind -x '"\C-x\C-t": _at_tab_complete'
+bind '"\C-x\C-r": complete'
+bind '"\t": "\C-x\C-t\C-x\C-r"'
+
 # ##############################################################################
 # GIT
 # ##############################################################################
@@ -493,17 +592,34 @@ set_plain_prompt() {
 
 # Bash executes the PROMPT_COMMAND env variable after each command is run.
 # This makes it useful as a post-command hook. After each command:
-#   1. Append the previously run command to the end of the HISTFILE. This
+#   1. Reverse-expand $WORKSPACE_ROOT/ back to @ in the last history entry
+#      so that history stores the compact @workspace form.
+#   2. Append the previously run command to the end of the HISTFILE. This
 #      shares the current shell session's commands with other sessions.
-#   2. Read the contents of HISTFILE into the current shell session's history.
+#   3. Read the contents of HISTFILE into the current shell session's history.
 #      This keeps the shell up to date with what other sessions have written.
-#   3. Execute set_prompt to generate the prompt string.
-#   4. If inside tmux, display the exit code of the last command in the title.
+#   4. Execute set_prompt to generate the prompt string.
+#   5. If inside tmux, display the exit code of the last command in the title.
 prompt_command() {
   # Commands in this function alter $? and $PIPESTATUS.
   # Save the true results from the command that was just run by the user.
   local exit_code=$?
   local pipe_status=("${PIPESTATUS[@]}")
+
+  # Reverse-expand $WORKSPACE_ROOT/ → @ in the last history entry.
+  # This keeps history compact and consistent with the @ convention, regardless
+  # of whether the user typed @ (which gets expanded inline) or the full path.
+  # For example, even `cat /home/sean/projects/dotfiles/.bashrc` typed without
+  # @ will appear as `cat @dotfiles/.bashrc` in history.
+  if [[ -n "$WORKSPACE_ROOT" ]]; then
+    local last_cmd
+    last_cmd=$(HISTTIMEFORMAT='' history 1 | sed 's/^ *[0-9]* *//')
+    local collapsed="${last_cmd//$WORKSPACE_ROOT\//@}"
+    if [[ "$collapsed" != "$last_cmd" ]]; then
+      history -d -1
+      history -s "$collapsed"
+    fi
+  fi
 
   history -a
   history -r
