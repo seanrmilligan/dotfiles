@@ -1,0 +1,25 @@
+# EditorConfig — also read by shfmt (v3.4+) for its formatting options.
+# Encodes Google Shell Style Guide formatting:
+# https://google.github.io/styleguide/shellguide.html
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{sh,bash}]
+# Indentation: 2 spaces, no tabs (Google style)
+indent_style = space
+indent_size = 2
+# Maximum line length is 80 characters (Google style)
+max_line_length = 80
+
+# shfmt-specific keys (ignored by other editorconfig consumers):
+# Put && / || / | at the start of the continuation line (Google style)
+binary_next_line = true
+# Indent case statement patterns one level (Google style)
+switch_case_indent = true
+# No space after redirect operators: >file, not > file
+space_redirects = false
