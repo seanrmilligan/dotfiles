@@ -49,6 +49,7 @@ cdw() {
     return $?
   fi
 
+  # Check if path exists and is a directory
   if [ -d "$WORKSPACE_ROOT/$1" ]; then
     cd "$WORKSPACE_ROOT/$1"
   else
@@ -64,13 +65,36 @@ lsw() {
   find "$WORKSPACE_ROOT" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"
 }
 
+mkw() {
+  if ! is_valid_directory WORKSPACE_ROOT; then
+    return $?
+  fi
+
+  # Check if path exists
+  if [ -e "$WORKSPACE_ROOT/$1" ]; then
+    err "Could not create workspace '$1': file exists"
+    return 4
+  fi
+
+  # Check if write permissions are granted
+  if [ -w "$WORKSPACE_ROOT/$1" ]; then
+    err "Could not create workspace '$1': permission denied"
+    return 5
+  fi
+
+  mkdir "$WORKSPACE_ROOT/$1"
+}
+
 rmw() {
   if ! is_valid_directory WORKSPACE_ROOT; then
     return $?
   fi
 
+  # Check if path exists and is a directory
   if [ -d "$WORKSPACE_ROOT/$1" ]; then
     rm -rf "${WORKSPACE_ROOT}/$1"
+  else
+    err "No such workspace '$1'"
   fi
 }
 
