@@ -1,0 +1,33 @@
+{
+  "model": "fable",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify-send --app-name='Claude' 'Action required' 'Claude needs your input'"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/sean/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "gitkraken-hooks@gitkraken": true
+  },
+  "extraKnownMarketplaces": {
+    "gitkraken": {
+      "source": {
+        "source": "directory",
+        "path": "/home/sean/.claude/plugins/marketplaces/gitkraken"
+      }
+    }
+  },
+  "theme": "dark",
+  "preferredNotifChannel": "terminal_bell"
+}
