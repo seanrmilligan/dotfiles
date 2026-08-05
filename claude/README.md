@@ -1,38 +1,59 @@
-# AI
+# claude
 
-Claude Code configuration: skills, and notes on what belongs where.
-
-Managed by git, installed by GNU Stow.
-
-## GNU Stow
-
-This README assumes a working knowledge of GNU Stow. Installing files via GNU
-Stow is covered more in the [configs README.md](../configs/README.md).
-
-## Layout
+User-wide Claude Code configuration, installed to `$HOME/.claude` by GNU Stow.
 
 ```
-experimental/user/sean.milligan/ai/
-├─ install-claude.sh
-├─ claude/                   | the "claude" GNU Stow package
-│  ├─ .claude/
-│  │  ├─ skills/
-│  │  │  ├─ <skill-name>/
-│  │  │  │  ├─ SKILL.md      | the skill itself
+claude/
+└─ .claude/
+   ├─ CLAUDE.md                | global instructions for every project
+   ├─ settings.json            | model, theme, hooks, statusline, permissions
+   ├─ statusline-command.sh    | statusline renderer (mirrors .bashrc prompt)
+   └─ skills/<name>/SKILL.md   | user-level skills, available in every project
 ```
 
 ## Installing
 
 ```sh
-cd $HOME/projects/experimental/user/sean.milligan/ai &&
-  ./install-claude.sh
+stow claude
 ```
 
-## Skills
+`install-dotfiles.sh` creates `$HOME/.claude/skills` first so Stow links
+individual files rather than folding whole directories — `$HOME/.claude` also
+holds runtime state (sessions, history, caches) that must not land in the repo.
 
-- A skill is a directory under `.claude/skills/` containing a `SKILL.md`.
-- A skill has a yaml document at the top called "frontmatter". While all fields
-  are optional, Claude benefits from a `name` and a `description`. Claude reads
-  the description to decide when the skill is relevant, so it should say both
-  what the skill does and when to use it.
-- User-level skills in `~/.claude/skills/` are available in every project.
+## Migrating from the old package
+
+This supersedes `~/projects/experimental/user/sean.milligan/ai/` and its
+`install-claude.sh`. That package stowed `~/.claude/skills/shell-script-review`,
+which conflicts here. Unstow it first:
+
+```sh
+stow --delete --dir="$HOME/projects/experimental/user/sean.milligan/ai" \
+  --target="$HOME" claude
+```
+
+Then delete `ai/claude/` and `ai/install-claude.sh` from that repo, keeping
+`ai/README.md` and `ai/CLAUDE.md` if the notes are still wanted there.
+
+## What belongs here vs. in a project
+
+- **Here**: preferences that follow the user across every repo — model, theme,
+  notification hooks, statusline, cross-language skills, and permissions for
+  tools that are safe everywhere (`gh`, `git` reads, package managers,
+  read-only system inspection).
+- **In the project** (`<repo>/.claude/`, tracked by that repo): build/test
+  commands, language-specific lint hooks, `.mcp.json` servers, and `AGENTS.md`
+  (with `CLAUDE.md` as a one-line `@AGENTS.md` include so all agents share it).
+- **`settings.local.json`** (untracked, per machine): left out of this package
+  on purpose. Claude appends newly approved permissions there; promote the
+  durable ones into `settings.json` here by hand.
+
+## Permissions
+
+`settings.json` merges the allowlists that had accumulated in
+`~/.claude/settings.local.json` and in each repo's
+`.claude/settings.local.json`. One-shot entries were dropped: absolute paths
+under `/home/sean` or `/tmp/claude-*`, specific patch/ticket IDs, `node -e`
+and `python3 -c` one-liners, ad-hoc `mongod` and `curl` invocations, and
+timestamped `journalctl` queries. Redundant narrow entries were collapsed into
+the glob that already covers them (e.g. `npm run *` into `npm *`).
