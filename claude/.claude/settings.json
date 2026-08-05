@@ -1,5 +1,11 @@
 {
   "model": "fable",
+  "theme": "dark",
+  "preferredNotifChannel": "terminal_bell",
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$HOME/.claude/statusline-command.sh\""
+  },
   "hooks": {
     "Notification": [
       {
@@ -13,10 +19,6 @@
       }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bash /home/sean/.claude/statusline-command.sh"
-  },
   "enabledPlugins": {
     "gitkraken-hooks@gitkraken": true
   },
@@ -28,6 +30,97 @@
       }
     }
   },
-  "theme": "dark",
-  "preferredNotifChannel": "terminal_bell"
+  "permissions": {
+    "allow": [
+      "Bash(gh --version)",
+      "Bash(gh auth status)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue view *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr status)",
+      "Bash(gh pr view *)",
+      "Bash(gh repo view *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(gh search *)",
+
+      "Bash(git blame *)",
+      "Bash(git branch --list *)",
+      "Bash(git check-ignore *)",
+      "Bash(git config --get *)",
+      "Bash(git describe *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git fetch *)",
+      "Bash(git grep *)",
+      "Bash(git log)",
+      "Bash(git log *)",
+      "Bash(git ls-files *)",
+      "Bash(git remote -v)",
+      "Bash(git rev-parse *)",
+      "Bash(git show *)",
+      "Bash(git stash list)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git submodule status)",
+      "Bash(git tag --list *)",
+      "Bash(git worktree list)",
+
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(npm config get *)",
+      "Bash(npm config list)",
+      "Bash(npm ls)",
+      "Bash(npm ls *)",
+      "Bash(npm outdated)",
+      "Bash(npm pkg get *)",
+      "Bash(npm view *)",
+      "Bash(npm why *)",
+
+      "Bash(grep *)",
+      "Bash(jq *)",
+      "Bash(stat *)",
+      "Bash(wait)",
+      "Bash(xargs cat)",
+
+      "Bash(apt-cache show *)",
+      "Bash(dpkg -l)",
+      "Bash(findmnt / -o SOURCE,FSTYPE,UUID)",
+      "Bash(journalctl --list-boots)",
+      "Bash(journalctl --since *)",
+      "Bash(journalctl -b *)",
+      "Bash(journalctl -k *)",
+      "Bash(journalctl -u *)",
+      "Bash(last reboot *)",
+      "Bash(lsblk *)",
+      "Bash(lsmod)",
+      "Bash(lspci)",
+      "Bash(ps -o pid,ppid,stat,%cpu,etime,args -ax)",
+      "Bash(swapon --show)",
+      "Bash(systemctl status *)",
+      "Bash(systemd-analyze cat-config *)",
+      "Bash(who -b)",
+
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:google.github.io)",
+      "WebFetch(domain:help.gitkraken.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ],
+    "ask": [
+      "Bash(awk *)",
+      "Bash(gh api *)",
+      "Bash(npx *)"
+    ],
+    "deny": [
+      "Bash(gh auth login *)",
+      "Bash(gh auth logout *)",
+      "Bash(gh auth token)",
+      "Bash(gh pr merge *)",
+      "Bash(git push *)",
+      "Bash(npm publish *)"
+    ]
+  }
 }
