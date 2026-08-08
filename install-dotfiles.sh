@@ -25,6 +25,7 @@ done
 # corresponding program, we don't end up with a symlinked directory. This avoids
 # files being written back to the repository as the app creates caches, logs,
 # etc. in its (symlinked) folder.
+mkdir --parents $HOME/.claude/skills
 mkdir --parents $HOME/.config/
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
 mkdir --parents $HOME/.config/terminator
@@ -35,6 +36,7 @@ mkdir --parents $HOME/.config/terminator
 # introduced -- we do want to install our version of the file, after all.
 stow --adopt --dir=$HOME/dotfiles --target=$HOME \
   bash       \
+  claude     \
   gdb        \
   ghostty    \
   git        \
