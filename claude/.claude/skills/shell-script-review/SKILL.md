@@ -24,7 +24,7 @@ Unless stated otherwise, all findings should be considered blocking.
 
 - A shebang must be present at the top of any script file that can be executed.
 - Always prefer `#!/usr/bin/env bash` over `#!/bin/bash`
-- Ensure commited scripts have the executable bit set.
+- Ensure committed scripts have the executable bit set.
 
 ## Shellopts
 
