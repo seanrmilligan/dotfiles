@@ -19,17 +19,6 @@
       }
     ]
   },
-  "enabledPlugins": {
-    "gitkraken-hooks@gitkraken": true
-  },
-  "extraKnownMarketplaces": {
-    "gitkraken": {
-      "source": {
-        "source": "directory",
-        "path": "/home/sean/.claude/plugins/marketplaces/gitkraken"
-      }
-    }
-  },
   "permissions": {
     "allow": [
       "Bash(gh --version)",
