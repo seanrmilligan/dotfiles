@@ -49,6 +49,7 @@ cdw() {
     return $?
   fi
 
+  # Check if path exists and is a directory
   if [ -d "$WORKSPACE_ROOT/$1" ]; then
     cd "$WORKSPACE_ROOT/$1"
   else
@@ -64,13 +65,36 @@ lsw() {
   find "$WORKSPACE_ROOT" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"
 }
 
+mkw() {
+  if ! is_valid_directory WORKSPACE_ROOT; then
+    return $?
+  fi
+
+  # Check if path exists
+  if [ -e "$WORKSPACE_ROOT/$1" ]; then
+    err "Could not create workspace '$1': file exists"
+    return 4
+  fi
+
+  # Check if write permissions are granted
+  if [ -w "$WORKSPACE_ROOT/$1" ]; then
+    err "Could not create workspace '$1': permission denied"
+    return 5
+  fi
+
+  mkdir "$WORKSPACE_ROOT/$1"
+}
+
 rmw() {
   if ! is_valid_directory WORKSPACE_ROOT; then
     return $?
   fi
 
+  # Check if path exists and is a directory
   if [ -d "$WORKSPACE_ROOT/$1" ]; then
     rm -rf "${WORKSPACE_ROOT}/$1"
+  else
+    err "No such workspace '$1'"
   fi
 }
 
@@ -501,6 +525,33 @@ alias bat='batcat'
 # As `batcat` provides built-in line numbering and syntax highlighting, we don't
 # need `less` to also apply the same when used as the PAGER for `batcat`.
 export BAT_PAGER="less -F -n -Q -S"
+
+# ##############################################################################
+# VS CODE
+# ##############################################################################
+
+code() {
+  # Intercept invocations of VS Code.
+  #
+  # If the directory passed to VS Code contains exactly one `*.code-workspace`
+  # file, open the `*.code-workspace` file instead of the directory itself.
+  #
+  # Only intercept the unambiguous case: a single argument.
+  # e.g.: `code .`, `code ~/projects/dotfiles`, etc.
+  #
+  # Any other invocation (non-directory argument, or with flags and options) is
+  # passed through to VS Code untouched.
+  if [ "$#" -eq 1 ] && [ -d "$1" ]; then
+    local -a workspace_files
+    mapfile -t workspace_files < <(find "$1" -maxdepth 1 -name "*.code-workspace" 2>/dev/null)
+    if [ "${#workspace_files[@]}" -eq 1 ]; then
+      command code "${workspace_files[0]}"
+      return
+    fi
+  fi
+
+  command code "$@"
+}
 
 # ##############################################################################
 #  BASH ALIASES
