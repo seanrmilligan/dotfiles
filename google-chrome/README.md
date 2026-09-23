@@ -2,16 +2,17 @@
 
 ## Synchronizing extensions and progressive web apps
 
-Chrome enterprise is actually just regular Chrome, where a policy file has been
-placed in a well-known location. Policy files are placed in the following:
+Chrome enterprise is actually just regular Chrome with a policy file placed in a
+well-known location. Policy files are placed in the following directories:
 
-- `/etc/opt/google/chrome/policies/managed/`
-- `/etc/opt/google/chrome/policies/recommended/`
+- `/etc/opt/chrome/policies/managed/`
+- `/etc/opt/chrome/policies/recommended/`
 
 Viewing loaded policies in Chrome:
 
 ```
 chrome://policy
+chrome://policy/logs
 ```
 
 View installed apps in Chrome:

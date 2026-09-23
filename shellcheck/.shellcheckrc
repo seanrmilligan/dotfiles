@@ -1,0 +1,26 @@
+# shellcheck config — enforces Google Shell Style Guide where possible:
+# https://google.github.io/styleguide/shellguide.html
+# shellcheck searches upward from the script for this file.
+
+# Google style targets bash; assume bash for scripts without a shebang.
+shell=bash
+
+# Follow `source`d files so cross-file usage is checked (needs source paths
+# resolvable; the VS Code extension passes the workspace root as cwd).
+external-sources=true
+
+# Optional checks that map to Google style rules:
+# "${var}" over "$var"
+enable=require-variable-braces
+# Quote variables even where word splitting can't occur
+enable=quote-safe-variables
+# case statements should handle the default *) case
+enable=add-default-case
+# [[ ... ]] over [ ... ] / test
+enable=require-double-brackets
+# Use $(command -v ...) instead of which
+enable=deprecate-which
+# [[ -n $x ]] instead of [[ $x ]]
+enable=avoid-nullary-conditions
+# Flag unassigned all-caps variables (Google: caps = env/constants only)
+enable=check-unassigned-uppercase
