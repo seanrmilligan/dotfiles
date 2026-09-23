@@ -162,7 +162,7 @@ complete -o nospace -F _cdw_autocomplete cdw
 # line) to avoid mangling patterns like user@host or email addresses.
 
 _expand_workspace_at() {
-  if [[ -z "$WORKSPACE_ROOT" ]]; then
+  if [ -z "$WORKSPACE_ROOT" ]; then
     return
   fi
 
@@ -173,26 +173,25 @@ _expand_workspace_at() {
   local prev_is_space=1  # Start of line counts as a word boundary.
 
   # Walk the line character by character, replacing @ at word boundaries.
-  while (( i < len )); do
+  while [ "$i" -lt "$len" ]; do
     local char="${line:i:1}"
 
-    if (( prev_is_space )) && [[ "$char" == "@" ]]; then
+    if [ "$prev_is_space" -eq 1 ] && [ "$char" = "@" ]; then
       result+="$WORKSPACE_ROOT/"
       # Track the cursor shift: we replaced 1 char (@) with N chars.
-      if (( READLINE_POINT > i )); then
-        (( READLINE_POINT += ${#WORKSPACE_ROOT} ))  # +len, -1 for @, +1 for /
+      if [ "$READLINE_POINT" -gt "$i" ]; then
+        READLINE_POINT=$(( READLINE_POINT + ${#WORKSPACE_ROOT} ))  # +len, -1 for @, +1 for /
       fi
     else
       result+="$char"
     fi
 
-    if [[ "$char" == " " || "$char" == $'\t' ]]; then
-      prev_is_space=1
-    else
-      prev_is_space=0
-    fi
+    case "$char" in
+      ' '|$'\t') prev_is_space=1 ;;
+              *) prev_is_space=0 ;;
+    esac
 
-    (( i++ ))
+    i=$(( i + 1 ))
   done
 
   READLINE_LINE="$result"
@@ -203,7 +202,7 @@ _expand_workspace_at_and_space() {
 
   # Insert a space at the cursor position.
   READLINE_LINE="${READLINE_LINE:0:READLINE_POINT} ${READLINE_LINE:READLINE_POINT}"
-  (( READLINE_POINT++ ))
+  READLINE_POINT=$(( READLINE_POINT + 1 ))
 }
 
 _expand_workspace_at_and_accept() {
@@ -241,12 +240,20 @@ _at_tab_complete() {
   local current_word="${before##* }"
 
   # At the start of the line there is no leading space to strip.
-  if [[ "$READLINE_POINT" -gt 0 && "$before" != *" "* ]]; then
-    current_word="$before"
+  if [ "$READLINE_POINT" -gt 0 ]; then
+    case "$before" in
+      *' '*) ;;
+          *) current_word="$before" ;;
+    esac
   fi
 
   # Only handle @-prefixed words.
-  if [[ "$current_word" != @* || -z "$WORKSPACE_ROOT" ]]; then
+  case "$current_word" in
+    @*) ;;
+     *) return ;;
+  esac
+
+  if [ -z "$WORKSPACE_ROOT" ]; then
     return
   fi
 
@@ -257,33 +264,33 @@ _at_tab_complete() {
 
   # Split into directory and basename components for nested paths like
   # @dotfiles/bash/.ba  ->  dir_part="dotfiles/bash"  base_part=".ba"
-  if [[ "$partial" == */* ]]; then
+  case "$partial" in */*)
     dir_part="${partial%/*}"
     base_part="${partial##*/}"
     search_dir="$WORKSPACE_ROOT/$dir_part"
-  fi
+  esac
 
   # Generate completions (files and directories).
   local completions=()
-  if [[ -d "$search_dir" ]]; then
+  if [ -d "$search_dir" ]; then
     mapfile -t completions < <(
       cd "$search_dir" 2>/dev/null &&
       compgen -f -- "$base_part" | sort
     )
   fi
 
-  if [[ ${#completions[@]} -eq 0 ]]; then
+  if [ ${#completions[@]} -eq 0 ]; then
     return
   fi
 
   local prefix_part="${READLINE_LINE:0:READLINE_POINT - ${#current_word}}"
   local after_part="${READLINE_LINE:READLINE_POINT}"
 
-  if [[ ${#completions[@]} -eq 1 ]]; then
+  if [ ${#completions[@]} -eq 1 ]; then
     # Single match — complete it fully.
     local match="${completions[0]}"
     local completed="@${dir_part:+$dir_part/}${match}"
-    if [[ -d "$search_dir/$match" ]]; then
+    if [ -d "$search_dir/$match" ]; then
       completed+="/"
     fi
     READLINE_LINE="${prefix_part}${completed}${after_part}"
@@ -295,9 +302,9 @@ _at_tab_complete() {
     local comp
     for comp in "${completions[@]:1}"; do
       local i=0
-      while (( i < ${#common} && i < ${#comp} )) && \
-            [[ "${common:i:1}" == "${comp:i:1}" ]]; do
-        (( i++ ))
+      while [ "$i" -lt "${#common}" ] && [ "$i" -lt "${#comp}" ] && \
+            [ "${common:i:1}" = "${comp:i:1}" ]; do
+        i=$(( i + 1 ))
       done
       common="${common:0:i}"
     done
@@ -310,7 +317,7 @@ _at_tab_complete() {
     local display=()
     local c
     for c in "${completions[@]}"; do
-      if [[ -d "$search_dir/$c" ]]; then
+      if [ -d "$search_dir/$c" ]; then
         display+=("$c/")
       else
         display+=("$c")
