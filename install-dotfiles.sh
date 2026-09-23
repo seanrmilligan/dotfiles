@@ -42,6 +42,7 @@ stow --adopt --dir=$HOME/dotfiles --target=$HOME \
   git        \
   nano       \
   profile    \
+  rider      \
   ssh        \
   sublime    \
   terminator \
