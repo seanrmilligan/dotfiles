@@ -29,12 +29,14 @@ mkdir --parents $HOME/.claude/skills
 mkdir --parents $HOME/.config/
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
 mkdir --parents $HOME/.config/terminator
+mkdir --parents $HOME/.gemini/antigravity-cli
 
 # Stow will not set up symlinks for the files we wish to install if they already
 # exist locally. The --adopt flag tells Stow to take in the local file over our
 # version, making it safe to set up the symlink. We then revert any changes this
 # introduced -- we do want to install our version of the file, after all.
 stow --adopt --dir=$HOME/dotfiles --target=$HOME \
+  antigravity \
   bash       \
   claude     \
   gdb        \
