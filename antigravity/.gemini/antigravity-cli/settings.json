@@ -1,0 +1,53 @@
+{
+  "allowNonWorkspaceAccess": true,
+  "colorScheme": "dark",
+  "model": "Claude Sonnet 4.6 (Thinking)",
+  "notifications": true,
+  "permissions": {
+    "allow": [
+      "command(dotnet)",
+      "command(ls)",
+      "command(head)",
+      "command(diff)",
+      "command(md5sum)",
+      "command(sleep)",
+      "command(grep)",
+      "command(find)",
+      "command(apt list)",
+      "command(which)",
+      "command(tail)",
+      "command(pgrep)",
+      "command(git log)",
+      "command(git diff)",
+      "command(git merge-base)",
+      "command(git status)",
+      "command(git check-ignore)",
+      "command(git read-tree)",
+      "command(git hash-object)",
+      "command(git rev-parse)",
+      "command(basename)",
+      "command(cat)",
+      "command(wc)",
+      "command(jq)",
+      "command(shellcheck)",
+      "command(sort)",
+      "command(echo)",
+      "command(git ls-files)",
+      "command(git show)",
+      "command(git ls-tree)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.gemini/antigravity-cli/statusline.sh"
+  },
+  "trustedWorkspaces": [
+    "/home/sean/projects/pomodoro",
+    "/home/sean/dotfiles",
+    "/home/sean/projects/dotfiles",
+    "/home/sean",
+    "/home/sean/projects/media-server",
+    "/home/sean/projects/backup"
+  ],
+  "useG1Credits": true
+}
