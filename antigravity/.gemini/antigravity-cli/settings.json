@@ -1,5 +1,5 @@
 {
-  "allowNonWorkspaceAccess": true,
+  "allowNonWorkspaceAccess": false,
   "colorScheme": "dark",
   "model": "Claude Sonnet 4.6 (Thinking)",
   "notifications": true,
@@ -45,7 +45,6 @@
     "/home/sean/projects/pomodoro",
     "/home/sean/dotfiles",
     "/home/sean/projects/dotfiles",
-    "/home/sean",
     "/home/sean/projects/media-server",
     "/home/sean/projects/backup"
   ],
