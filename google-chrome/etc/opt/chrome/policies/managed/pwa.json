@@ -1,0 +1,54 @@
+{
+  "WebAppInstallForceList": [
+    {
+      "url": "https://app.todoist.com/app/",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://music.youtube.com/?source=pwa",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://www.netflix.com/pwa",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://docs.google.com/document/",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://docs.google.com/spreadsheets/",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://github.com/",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://mail.google.com/mail/",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://keep.google.com/",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://voice.google.com/u/0/?pwa_mode",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    },
+    {
+      "url": "https://calendar.google.com/calendar/r",
+      "default_launch_container": "window",
+      "create_desktop_shortcut": true
+    }
+  ]
+}

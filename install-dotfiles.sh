@@ -31,6 +31,7 @@ mkdir --parents $HOME/.config/lxqt
 mkdir --parents $HOME/.config/pcmanfm-qt/lxqt
 mkdir --parents $HOME/.config/sublime-text-3/Packages/User
 mkdir --parents $HOME/.config/terminator
+mkdir --parents $HOME/.gemini/antigravity-cli
 mkdir --parents $HOME/.local/bin
 
 # Stow will not set up symlinks for the files we wish to install if they already
@@ -38,6 +39,7 @@ mkdir --parents $HOME/.local/bin
 # version, making it safe to set up the symlink. We then revert any changes this
 # introduced -- we do want to install our version of the file, after all.
 stow --adopt --dir=$HOME/dotfiles --target=$HOME \
+  antigravity   \
   bash          \
   claude        \
   gdb           \
@@ -48,6 +50,7 @@ stow --adopt --dir=$HOME/dotfiles --target=$HOME \
   nano          \
   pcmanfm       \
   profile       \
+  rider         \
   ssh           \
   sublime       \
   terminator    \
