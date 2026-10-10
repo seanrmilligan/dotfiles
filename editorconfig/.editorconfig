@@ -75,3 +75,66 @@ dotnet_style_qualification_for_property = false:warning
 dotnet_style_qualification_for_method = false:warning
 dotnet_style_qualification_for_event = false:warning
 
+################################################################################
+# Expression-bodied and Block-bodied Members
+################################################################################
+
+#
+# Use expression-bodied members for properties, indexers, lambdas, and local functions
+#
+
+# Expression-bodied properties
+#   Before: string FullName { get { return $"{FirstName} {LastName}"; } }
+#    After: string FullName => $"{FirstName} {LastName}";
+csharp_style_expression_bodied_properties = true:warning
+
+# Expression-bodied indexers
+#   Before: Friend this[int id] { get { return _friends[id]; } }
+#    After: Friend this[int id] => _friends[id];
+csharp_style_expression_bodied_indexers = true:warning
+
+# Expression-bodied lambda functions (functions assigned to a variable)
+#   Before: Func<int, int> square = (x) => { return x * x; };
+#    After: Func<int, int> square = x => x * x;
+csharp_style_expression_bodied_lambdas = true:silent
+
+# Expression-bodied local functions (functions declared inside a method's scope)
+#   Before: int Square(int x) { return x * x; }
+#    After: int Square(int x) => x * x;
+csharp_style_expression_bodied_local_functions = true:warning
+
+#
+# Use block-bodied members for constructors, methods, and accessors
+#
+
+# Block-bodied constructors
+#   Before: public Person(string id) => Id = id;
+#    After: public Person(string id) { Id = id; }
+csharp_style_expression_bodied_constructors = false:warning
+
+# Block-bodied methods
+#   Before: void Add(Friend f) => _friends[f.Id] = f;
+#    After: void Add(Friend f) { _friends[f.Id] = f; }
+csharp_style_expression_bodied_methods = false:warning
+
+# Block-bodied accessors
+# Note: does not apply to auto-implemented properties (e.g. { get; set; })
+#   Before: List<Friend> Friends { get => _friends; set => _friends = value; }
+#    After: List<Friend> Friends { get { return _friends; } set { _friends = value; } }
+csharp_style_expression_bodied_accessors = false:warning
+
+#
+# Switch between expression-bodied and block-bodied for operators
+#
+
+# Operators -- switch based on if the body can fit on a single line
+#   One line:
+#     public static Point operator +(Point a, Point b) => new(a.X + b.X, a.Y + b.Y);
+#
+#   Otherwise:
+#     public static Point operator +(Point a, Point b)
+#     {
+#         return new(a.X + b.X, a.Y + b.Y);
+#     }
+csharp_style_expression_bodied_operators = when_on_single_line:warning
+
