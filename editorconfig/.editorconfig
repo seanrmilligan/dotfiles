@@ -138,3 +138,23 @@ csharp_style_expression_bodied_accessors = false:warning
 #     }
 csharp_style_expression_bodied_operators = when_on_single_line:warning
 
+################################################################################
+# Collection expressions
+################################################################################
+
+# Use collection expressions for most types
+#   preferred: [1, 2, 3]
+#   instead of: new() {1, 2, 3}
+dotnet_style_prefer_collection_expression = true:warning
+
+# Do not enforce use of collection expressions over explicit empty initializers
+#   preferred: ImmutableArray<T>.Empty, Array.Empty<T>()
+#   instead of: []
+dotnet_diagnostic.IDE0301.severity = none
+
+# Do not enforce use of collection expressions for LINQ fluent methods.
+# This preserves the order of events visually in a LINQ expression.
+#   preferred: someCollection.Where(x => x == null).ToList()
+#   instead of: [ ..someCollection.Where(x => x == null) ]
+dotnet_diagnostic.IDE0305.severity = none
+
