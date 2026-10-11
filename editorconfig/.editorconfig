@@ -23,3 +23,31 @@ binary_next_line = true
 switch_case_indent = true
 # No space after redirect operators: >file, not > file
 space_redirects = false
+
+
+[*.cs]
+
+################################################################################
+# Formatting
+################################################################################
+
+# Whitespace
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# Use curly braces on all code blocks, even when optional (such as one line ifs)
+csharp_prefer_braces = true:warning
+
+# Use Allman-style braces (every curly brace gets its own line)
+csharp_new_line_before_open_brace = all
+
+# Place keywords on new lines
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# Place members on new lines
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
