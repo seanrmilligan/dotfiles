@@ -158,3 +158,13 @@ dotnet_diagnostic.IDE0301.severity = none
 #   instead of: [ ..someCollection.Where(x => x == null) ]
 dotnet_diagnostic.IDE0305.severity = none
 
+################################################################################
+# Nullable Reference Types
+################################################################################
+
+# Do not assign or convert possible null value to non-nullable type
+dotnet_diagnostic.CS8600.severity = error
+
+# Require non-nullable field to have a non-null value when exiting constructor
+dotnet_diagnostic.CS8618.severity = error
+
