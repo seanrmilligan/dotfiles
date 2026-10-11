@@ -187,7 +187,7 @@ dotnet_diagnostic.CA1510.severity = warning
 #     {
 #       throw new ArgumentException("x cannot be empty", nameof(x));
 #     }
-#    After: ArgumentNullException.ThrowIfNullOrEmpty(x)
+#    After: ArgumentException.ThrowIfNullOrEmpty(x)
 dotnet_diagnostic.CA1511.severity = warning
 
 #   Before:
