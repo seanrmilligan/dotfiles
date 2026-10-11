@@ -168,3 +168,51 @@ dotnet_diagnostic.CS8600.severity = error
 # Require non-nullable field to have a non-null value when exiting constructor
 dotnet_diagnostic.CS8618.severity = error
 
+################################################################################
+# Argument and State Validation
+################################################################################
+
+#
+# Use static ThrowIf* helpers over manual validation for arguments
+#
+
+# Null arguments
+#   Before: if (x == null) { throw new ArgumentNullException(nameof(x)); }
+#    After: ArgumentNullException.ThrowIfNull(x)
+dotnet_diagnostic.CA1510.severity = warning
+
+# Null or empty arguments
+#   Before:
+#     if (string.IsNullOrEmpty(x))
+#     {
+#       throw new ArgumentException("x canot be empty", nameof(x));
+#     }
+#    After: ArgumentNullException.ThrowIfNullOrEmpty(x)
+dotnet_diagnostic.CA1511.severity = warning
+
+#   Before:
+#     if (distance < 0)
+#     {
+#         throw new ArgumentOutOfRangeException(nameof(distance));
+#     }
+#    After:
+#     ArgumentOutOfRangeException.ThrowIfNegative(distance);
+#     ArgumentOutOfRangeException.ThrowIfZero(...)
+#     ArgumentOutOfRangeException.ThrowIfGreaterThan(...)
+#     ...
+dotnet_diagnostic.CA1512.severity = warning
+
+#
+# Use static ThrowIf* helpers over manual validation for IDisposable state
+#
+
+# Disposable objects
+#   Before:
+#     if (_isDisposed)
+#     {
+#         throw new ObjectDisposedException(nameof(ThisClass));
+#     }
+#    After:
+#     ObjectDisposedException.ThrowIf(_isDisposed, this);
+dotnet_diagnostic.CA1513.severity = warning
+
