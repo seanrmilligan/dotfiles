@@ -31,9 +31,15 @@ ctx_output="$(echo "$input" | jq --raw-output '.context_window.total_output_toke
 # Quota — pick the most relevant bucket based on model
 # Third-party models (Claude, etc.) use "3p-*"; Gemini models use "gemini-*"
 # Show the 5-hour rolling window (the binding constraint)
-q5h_remaining="$(echo "$input" | jq --raw-output '(.quota["3p-5h"].remaining_fraction // .quota["gemini-5h"].remaining_fraction // empty)')"
-q5h_reset_s="$(echo "$input" | jq --raw-output '(.quota["3p-5h"].reset_in_seconds // .quota["gemini-5h"].reset_in_seconds // empty)')"
-qweek_remaining="$(echo "$input" | jq --raw-output '(.quota["3p-weekly"].remaining_fraction // .quota["gemini-weekly"].remaining_fraction // empty)')"
+if [[ "$model" == *"Gemini"* ]] || [[ "$model" == *"gemini"* ]]; then
+  q5h_remaining="$(echo "$input" | jq --raw-output '(.quota["gemini-5h"].remaining_fraction // empty)')"
+  q5h_reset_s="$(echo "$input" | jq --raw-output '(.quota["gemini-5h"].reset_in_seconds // empty)')"
+  qweek_remaining="$(echo "$input" | jq --raw-output '(.quota["gemini-weekly"].remaining_fraction // empty)')"
+else
+  q5h_remaining="$(echo "$input" | jq --raw-output '(.quota["3p-5h"].remaining_fraction // empty)')"
+  q5h_reset_s="$(echo "$input" | jq --raw-output '(.quota["3p-5h"].reset_in_seconds // empty)')"
+  qweek_remaining="$(echo "$input" | jq --raw-output '(.quota["3p-weekly"].remaining_fraction // empty)')"
+fi
 
 # --- Shorten workspace to ~ path ---
 if [[ "$workspace" == "$HOME"* ]]; then
