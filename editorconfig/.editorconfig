@@ -178,7 +178,7 @@ dotnet_diagnostic.CS8618.severity = error
 
 # Null arguments
 #   Before: if (x == null) { throw new ArgumentNullException(nameof(x)); }
-#    After: ArgumentNullException.ThrowIfNull(x)
+#    After: ArgumentNullException.ThrowIfNull(x);
 dotnet_diagnostic.CA1510.severity = warning
 
 # Null or empty arguments
