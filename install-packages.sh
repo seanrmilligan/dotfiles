@@ -115,7 +115,7 @@ fi
 # Install Google Chrome
 if ! command -v google-chrome-stable &> /dev/null
 then
-  chrome_installer="$TMPDIR/google-chrome-stable.deb"
+  chrome_installer="${TMPDIR:-/tmp}/google-chrome-stable.deb"
 
   curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     --location \
@@ -133,7 +133,7 @@ if pgrep -x "gitkraken" > /dev/null
 then
   err "GitKraken is open. Close it before updating."
 else
-  gitkraken_installer="$TMPDIR/gitkraken-amd64.deb"
+  gitkraken_installer="${TMPDIR:-/tmp}/gitkraken-amd64.deb"
 
   curl https://release.gitkraken.com/linux/gitkraken-amd64.deb \
     --location                                                 \
