@@ -7,7 +7,9 @@
   eol = native
   excludesfile = ~/.gitignore_global
   longpaths = true
-  page = less
+  # Override $LESS settings to turn off line numbers as they don't make sense in
+  # diff views.
+  pager = less -F -Q -R -S -+N
 [init]
   defaultBranch = "master"
 [pull]
