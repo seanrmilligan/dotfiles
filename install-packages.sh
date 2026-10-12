@@ -41,7 +41,7 @@ configure_source() {
   # Copy apt sources rather than symlink through stow.
   # The '_apt' user must have read access to the file, and the '_apt' user
   # will not have access to the /home/$(whoami)/dotfiles directory.
-  cp "$DOTFILES_ROOT/$1" "/etc/apt/sources.list.d/$1"
+  cp "$DOTFILES_ROOT/$1" "/etc/apt/sources.list.d/$(basename "$1")"
 }
 
 if [ "$(id -u)" -ne 0 ]; then
@@ -72,7 +72,7 @@ if ! command -v subl &> /dev/null; then
     "https://download.sublimetext.com/sublimehq-pub.gpg" \
     "/etc/apt/keyrings/sublimehq.gpg"
 
-  configure_source "sublime-text.sources"
+  configure_source "sublime/sublime-text.sources"
 
   apt update
 
@@ -86,7 +86,7 @@ then
     "https://packages.microsoft.com/keys/microsoft.asc" \
     "/etc/apt/keyrings/microsoft.gpg"
 
-  configure_source "vscode.sources"
+  configure_source "vscode/vscode.sources"
 
   apt update
 
@@ -100,7 +100,7 @@ then
     "https://download.docker.com/linux/ubuntu/gpg" \
     "/etc/apt/keyrings/docker.gpg"
 
-  configure_source "docker.sources"
+  configure_source "docker/docker.sources"
 
   apt update
 
