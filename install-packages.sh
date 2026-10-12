@@ -8,6 +8,17 @@ err() {
   echo "Error: $*" >&2
 }
 
+usage() {
+  echo "Usage: $(basename "$0") [--headless | --desktop]"
+  echo
+  echo "Install packages for this machine. Packages common to all machines are"
+  echo "always installed. The machine type selects the remaining packages:"
+  echo "  --headless  Servers and other machines without a graphical session."
+  echo "  --desktop   Machines with a graphical session."
+  echo
+  echo "If no machine type is given, you will be prompted for one."
+}
+
 # Key locations:
 # - /etc/apt/keyrings
 #   For keys installed by the user. Apt will only trust these keys for
@@ -44,18 +55,60 @@ configure_source() {
   cp "$DOTFILES_ROOT/$1" "/etc/apt/sources.list.d/$(basename "$1")"
 }
 
+# ##############################################################################
+# MACHINE TYPE
+# ##############################################################################
+
+machine_type=""
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --headless)
+      machine_type="headless"
+      ;;
+    --desktop)
+      machine_type="desktop"
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      err "Unknown option '$1'"
+      usage >&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
 if [ "$(id -u)" -ne 0 ]; then
   err "Must run as root."
   exit 1
 fi
 
+# No machine type supplied as a flag. Ask for one.
+while [ -z "$machine_type" ]; do
+  read -r -p "Is this a (h)eadless or (d)esktop machine? " option
+  case "$option" in
+    h | H | headless) machine_type="headless" ;;
+    d | D | desktop)  machine_type="desktop"  ;;
+    *) err "Please answer 'h' or 'd'." ;;
+  esac
+done
+
+echo "Installing packages for a $machine_type machine."
+
+# ##############################################################################
+# COMMON PACKAGES
+# ##############################################################################
+
 apt install        \
   bat              \
+  curl             \
   gcc              \
   gdb              \
   gh               \
-  ghostty          \
-  gnome-keyring    \
   gpg              \
   jq               \
   make             \
@@ -63,35 +116,7 @@ apt install        \
   sl               \
   source-highlight \
   stow             \
-  tmux             \
   wget
-
-# Install Sublime Text
-if ! command -v subl &> /dev/null; then
-  install_key \
-    "https://download.sublimetext.com/sublimehq-pub.gpg" \
-    "/etc/apt/keyrings/sublimehq.gpg"
-
-  configure_source "sublime/sublime-text.sources"
-
-  apt update
-
-  apt install sublime-text sublime-merge
-fi
-
-# Install VS Code
-if ! command -v code &> /dev/null
-then
-  install_key \
-    "https://packages.microsoft.com/keys/microsoft.asc" \
-    "/etc/apt/keyrings/microsoft.gpg"
-
-  configure_source "vscode/vscode.sources"
-
-  apt update
-
-  apt install code
-fi
 
 # Install Docker
 if ! command -v docker &> /dev/null
@@ -112,32 +137,79 @@ then
     docker-compose-plugin
 fi
 
-# Install Google Chrome
-if ! command -v google-chrome-stable &> /dev/null
-then
-  chrome_installer="${TMPDIR:-/tmp}/google-chrome-stable.deb"
+# ##############################################################################
+# HEADLESS PACKAGES
+# ##############################################################################
 
-  curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    --location \
-    --output="$chrome_installer"
-
-  apt install "$chrome_installer"
+if [ "$machine_type" = "headless" ]; then
+  # tmux keeps sessions alive through SIGHUP when signing out of a server.
+  apt install \
+    tmux
 fi
 
-# Install GitKraken
-# GitKraken will not register with apt for automatic updates, so we do not guard
-# against its binary already being configured. Instead we run this every time.
-# Check that gitkraken is not running to prevent any disruption. (This is
-# implicitly checked for the others when we see if the binary is installed.)
-if pgrep -x "gitkraken" > /dev/null
-then
-  err "GitKraken is open. Close it before updating."
-else
-  gitkraken_installer="${TMPDIR:-/tmp}/gitkraken-amd64.deb"
+# ##############################################################################
+# DESKTOP PACKAGES
+# ##############################################################################
 
-  curl https://release.gitkraken.com/linux/gitkraken-amd64.deb \
-    --location                                                 \
-    --output="$gitkraken_installer"
+if [ "$machine_type" = "desktop" ]; then
+  apt install     \
+    ghostty       \
+    gnome-keyring
 
-  apt install "$gitkraken_installer"
+  # Install Sublime Text
+  if ! command -v subl &> /dev/null; then
+    install_key \
+      "https://download.sublimetext.com/sublimehq-pub.gpg" \
+      "/etc/apt/keyrings/sublimehq.gpg"
+
+    configure_source "sublime/sublime-text.sources"
+
+    apt update
+
+    apt install sublime-text sublime-merge
+  fi
+
+  # Install VS Code
+  if ! command -v code &> /dev/null
+  then
+    install_key \
+      "https://packages.microsoft.com/keys/microsoft.asc" \
+      "/etc/apt/keyrings/microsoft.gpg"
+
+    configure_source "vscode/vscode.sources"
+
+    apt update
+
+    apt install code
+  fi
+
+  # Install Google Chrome
+  if ! command -v google-chrome-stable &> /dev/null
+  then
+    chrome_installer="${TMPDIR:-/tmp}/google-chrome-stable.deb"
+
+    curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+      --location \
+      --output="$chrome_installer"
+
+    apt install "$chrome_installer"
+  fi
+
+  # Install GitKraken
+  # GitKraken will not register with apt for automatic updates, so we do not guard
+  # against its binary already being configured. Instead we run this every time.
+  # Check that gitkraken is not running to prevent any disruption. (This is
+  # implicitly checked for the others when we see if the binary is installed.)
+  if pgrep -x "gitkraken" > /dev/null
+  then
+    err "GitKraken is open. Close it before updating."
+  else
+    gitkraken_installer="${TMPDIR:-/tmp}/gitkraken-amd64.deb"
+
+    curl https://release.gitkraken.com/linux/gitkraken-amd64.deb \
+      --location                                                 \
+      --output="$gitkraken_installer"
+
+    apt install "$gitkraken_installer"
+  fi
 fi
