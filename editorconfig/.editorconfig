@@ -23,3 +23,251 @@ binary_next_line = true
 switch_case_indent = true
 # No space after redirect operators: >file, not > file
 space_redirects = false
+
+
+[*.cs]
+
+################################################################################
+# Formatting
+################################################################################
+
+# Whitespace
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# Use curly braces on all code blocks, even when optional (such as one line ifs)
+csharp_prefer_braces = true:warning
+
+# Use Allman-style braces (every curly brace gets its own line)
+csharp_new_line_before_open_brace = all
+
+# Place keywords on new lines
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# Place members on new lines
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
+################################################################################
+# Variable Declaration and Access
+################################################################################
+
+# Use explicit types, not var
+#  Before: var x = 5;
+#  After: int x = 5;
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
+
+# Use "target-typed new()" as type is always apparent when not using var
+#   Before: List<int> numbers = new List<int>();
+#   After: List<int> numbers = new();
+csharp_style_implicit_object_creation_when_type_is_apparent = true:warning
+
+# Do not use `this` for instance members
+#   Before: this._lastRefreshed = this.Refresh();
+#   After: _lastRefreshed = Refresh();
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+
+################################################################################
+# Expression-bodied and Block-bodied Members
+################################################################################
+
+#
+# Use expression-bodied members for properties, indexers, lambdas, and local functions
+#
+
+# Expression-bodied properties
+#   Before: string FullName { get { return $"{FirstName} {LastName}"; } }
+#    After: string FullName => $"{FirstName} {LastName}";
+csharp_style_expression_bodied_properties = true:warning
+
+# Expression-bodied indexers
+#   Before: Friend this[int id] { get { return _friends[id]; } }
+#    After: Friend this[int id] => _friends[id];
+csharp_style_expression_bodied_indexers = true:warning
+
+# Expression-bodied lambda functions (functions assigned to a variable)
+#   Before: Func<int, int> square = (x) => { return x * x; };
+#    After: Func<int, int> square = x => x * x;
+csharp_style_expression_bodied_lambdas = true:silent
+
+# Expression-bodied local functions (functions declared inside a method's scope)
+#   Before: int Square(int x) { return x * x; }
+#    After: int Square(int x) => x * x;
+csharp_style_expression_bodied_local_functions = true:warning
+
+#
+# Use block-bodied members for constructors, methods, and accessors
+#
+
+# Block-bodied constructors
+#   Before: public Person(string id) => Id = id;
+#    After: public Person(string id) { Id = id; }
+csharp_style_expression_bodied_constructors = false:warning
+
+# Block-bodied methods
+#   Before: void Add(Friend f) => _friends[f.Id] = f;
+#    After: void Add(Friend f) { _friends[f.Id] = f; }
+csharp_style_expression_bodied_methods = false:warning
+
+# Block-bodied accessors
+# Note: does not apply to auto-implemented properties (e.g. { get; set; })
+#   Before: List<Friend> Friends { get => _friends; set => _friends = value; }
+#    After: List<Friend> Friends { get { return _friends; } set { _friends = value; } }
+csharp_style_expression_bodied_accessors = false:warning
+
+#
+# Switch between expression-bodied and block-bodied for operators
+#
+
+# Operators -- switch based on whether the body can fit on a single line
+#   One line:
+#     public static Point operator +(Point a, Point b) => new(a.X + b.X, a.Y + b.Y);
+#
+#   Otherwise:
+#     public static Point operator +(Point a, Point b)
+#     {
+#         return new(a.X + b.X, a.Y + b.Y);
+#     }
+csharp_style_expression_bodied_operators = when_on_single_line:warning
+
+################################################################################
+# Collection expressions
+################################################################################
+
+# Use collection expressions for most types
+#   preferred: [1, 2, 3]
+#   instead of: new() {1, 2, 3}
+dotnet_style_prefer_collection_expression = true:warning
+
+# Do not enforce use of collection expressions over explicit empty initializers
+#   preferred: ImmutableArray<T>.Empty, Array.Empty<T>()
+#   instead of: []
+dotnet_diagnostic.IDE0301.severity = none
+
+# Do not enforce use of collection expressions for LINQ fluent methods.
+# This preserves the order of events visually in a LINQ expression.
+#   preferred: someCollection.Where(x => x == null).ToList()
+#   instead of: [ ..someCollection.Where(x => x == null) ]
+dotnet_diagnostic.IDE0305.severity = none
+
+################################################################################
+# Nullable Reference Types
+################################################################################
+
+# Do not assign or convert possible null value to non-nullable type
+dotnet_diagnostic.CS8600.severity = error
+
+# Require non-nullable field to have a non-null value when exiting constructor
+dotnet_diagnostic.CS8618.severity = error
+
+################################################################################
+# Argument and State Validation
+################################################################################
+
+#
+# Use static ThrowIf* helpers over manual validation for arguments
+#
+
+# Null arguments
+#   Before: if (x == null) { throw new ArgumentNullException(nameof(x)); }
+#    After: ArgumentNullException.ThrowIfNull(x);
+dotnet_diagnostic.CA1510.severity = warning
+
+# Null or empty arguments
+#   Before:
+#     if (string.IsNullOrEmpty(x))
+#     {
+#         throw new ArgumentException("x cannot be empty", nameof(x));
+#     }
+#    After: ArgumentException.ThrowIfNullOrEmpty(x)
+dotnet_diagnostic.CA1511.severity = warning
+
+#   Before:
+#     if (distance < 0)
+#     {
+#         throw new ArgumentOutOfRangeException(nameof(distance));
+#     }
+#    After:
+#     ArgumentOutOfRangeException.ThrowIfNegative(distance);
+#     ArgumentOutOfRangeException.ThrowIfZero(...)
+#     ArgumentOutOfRangeException.ThrowIfGreaterThan(...)
+#     ...
+dotnet_diagnostic.CA1512.severity = warning
+
+#
+# Use static ThrowIf* helpers over manual validation for IDisposable state
+#
+
+# Disposable objects
+#   Before:
+#     if (_isDisposed)
+#     {
+#         throw new ObjectDisposedException(nameof(ThisClass));
+#     }
+#    After:
+#     ObjectDisposedException.ThrowIf(_isDisposed, this);
+dotnet_diagnostic.CA1513.severity = warning
+
+################################################################################
+# Naming Conventions
+################################################################################
+
+#
+# Private instance fields: _camelCase
+#
+
+dotnet_naming_rule.private_fields_with_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_with_underscore.style = prefix_underscore
+dotnet_naming_rule.private_fields_with_underscore.severity = warning
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private, internal
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
+#
+# Constants: PascalCase
+#
+
+dotnet_naming_rule.constants_pascal_case.symbols = constant_fields
+dotnet_naming_rule.constants_pascal_case.style = pascal_case_style
+dotnet_naming_rule.constants_pascal_case.severity = warning
+
+dotnet_naming_symbols.constant_fields.applicable_kinds = field, local
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+
+#
+# Static readonly fields: PascalCase
+#
+
+dotnet_naming_rule.static_readonly_pascal_case.symbols = static_readonly_fields
+dotnet_naming_rule.static_readonly_pascal_case.style = pascal_case_style
+dotnet_naming_rule.static_readonly_pascal_case.severity = warning
+
+dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_fields.required_modifiers = static, readonly
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+#
+# Interfaces: IPascalCase
+#
+
+dotnet_naming_rule.interfaces_begin_with_i.symbols = interface_symbols
+dotnet_naming_rule.interfaces_begin_with_i.style = interface_style
+dotnet_naming_rule.interfaces_begin_with_i.severity = warning
+
+dotnet_naming_symbols.interface_symbols.applicable_kinds = interface
+
+dotnet_naming_style.interface_style.capitalization = pascal_case
+dotnet_naming_style.interface_style.required_prefix = I
+
