@@ -271,3 +271,50 @@ dotnet_naming_symbols.interface_symbols.applicable_kinds = interface
 dotnet_naming_style.interface_style.capitalization = pascal_case
 dotnet_naming_style.interface_style.required_prefix = I
 
+
+################################################################################
+# Pattern Matching
+################################################################################
+
+# Use pattern matching over compound logical operators
+#   Before:
+#     if (obj is Person p && p.Age >= 18) { ... }
+#    After:
+#     if (obj is Person { Age: >= 18 } p) { ... }
+csharp_style_prefer_pattern_matching = true:warning
+
+# Use pattern matching over 'as' with null checks
+#   Before:
+#     string str = obj as string;
+#     if (str != null) { ... }
+#    After:
+#     if (obj is string str) { ... }
+csharp_style_pattern_matching_over_as_with_null_check = true:warning
+
+# Use pattern matching over explicit casts
+#   Before:
+#     if (obj is string) { string str = (string)obj }
+#    After:
+#     if (obj is string str) { ... }
+csharp_style_pattern_matching_over_is_with_cast_check = true:warning
+
+# Prefer 'not' pattern over negated 'is' expressions
+#   Before: items.Where(x => !(x is null));
+#    After: items.Where(x => x is not null);
+csharp_style_prefer_not_pattern = true:warning
+
+# Prefer switch expressions over switch statements
+#   Before:
+#     switch (shape)
+#     {
+#         case Circle c: return c.Radius;
+#         default: return 0;
+#     }
+#    After:
+#     return shape switch
+#     {
+#         Circle c => c.Radius,
+#         _ => 0
+#     };
+csharp_style_prefer_switch_expression = true:warning
+
