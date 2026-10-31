@@ -28,8 +28,48 @@ space_redirects = false
 [*.cs]
 
 ################################################################################
+# Structure
+################################################################################
+
+# Use file-scoped namespaces
+#   Before:
+#     namespace MySolution.MyProject { ... }
+#    After:
+#     namespace MySolution.MyProject;
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Use primary constructors
+#   Before:
+#     public class Person
+#     {
+#         public string Name { get; set; }
+#
+#         public Person(string name)
+#         {
+#             Name = name;
+#         }
+#     }
+#    After:
+#     public class Person(string name)
+#     {
+#         public string Name { get; set; } = name;
+#     }
+csharp_prefer_primary_constructors = true:warning
+
+# Use using declarations, not using blocks
+#   Before:
+#     using (SqlConnection connection = new(connString)) { ... }
+#    After:
+#     using SqlConnection connection = new(connString);
+csharp_prefer_simple_using_statement = true:warning
+
+################################################################################
 # Formatting
 ################################################################################
+
+# Imports: System first, no blank line between groups
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
 
 # Whitespace
 indent_style = space
@@ -80,7 +120,8 @@ dotnet_style_qualification_for_event = false:warning
 ################################################################################
 
 #
-# Use expression-bodied members for properties, indexers, lambdas, and local functions
+# Use expression-bodied members for properties, indexers, lambdas, and
+# local functions
 #
 
 # Expression-bodied properties
