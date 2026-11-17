@@ -16,6 +16,26 @@
 
 set -euo pipefail
 
+# Exit if any required external dependencies are missing
+missing_deps=()
+for cmd in jq bc cat basename; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    missing_deps+=("$cmd")
+  fi
+done
+
+if [[ ${#missing_deps[@]} -gt 0 ]]; then
+  printf -v missing_str ", %s" "${missing_deps[@]}"
+  missing_str="${missing_str:2}"
+  if [[ ${#missing_deps[@]} -eq 1 ]]; then
+    label="required dependency (${missing_str}) is missing"
+  else
+    label="required dependencies (${missing_str}) are missing"
+  fi
+  echo -ne "\e[43m\e[30m\e[1m statusline: ${label} \e[0m\e[33m\xee\x82\xb0\e[0m"
+  exit 0
+fi
+
 input="$(cat)"
 
 # --- Extract fields ---
