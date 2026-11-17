@@ -7,8 +7,12 @@
   eol = native
   excludesfile = ~/.gitignore_global
   longpaths = true
-  # Override $LESS settings to turn off line numbers as they don't make sense in
-  # diff views.
+  # Override global $LESS settings from .bashrc
+  # -F: Automatically quit when the content is less than the screen height.
+  # -+N: Override: turn off line numbers as they don't make sense in diff views.
+  # -Q: Do not ring the bell upon scrolling to the beginning or end of the file.
+  # -R: Print ANSI control characters to enable shell syntax highlighting.
+  # -S: Prefer horizontal scrolling over line wrapping.
   pager = less -F -Q -R -S -+N
 [init]
   defaultBranch = "master"
