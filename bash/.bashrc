@@ -575,3 +575,6 @@ if [ -x /usr/bin/dircolors ]; then
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
 fi
+
+# A cheeky companion to `whoami`
+alias whereami='uname -n'

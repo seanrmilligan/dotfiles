@@ -16,6 +16,7 @@
       "command(apt list)",
       "command(which)",
       "command(tail)",
+      "command(ps)",
       "command(pgrep)",
       "command(git log)",
       "command(git diff)",
