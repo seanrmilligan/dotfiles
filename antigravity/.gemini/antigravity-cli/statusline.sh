@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-# Guard: exit early if any required external dependencies are missing
+# Exit if any required external dependencies are missing
 missing_deps=()
 for cmd in jq bc cat basename; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
