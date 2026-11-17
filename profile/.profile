@@ -6,9 +6,13 @@
 
 # Executed by the command interpreter for login shells.
 #
-# Login shells may be interactive or non-interactive. Interactive shells should
-# get "human" features (colors, formatted prompt strings, tmux TUI management)
-# while non-interactive shells should skip receiving these.
+# Login shells are interactive or non-interactive.
+# Interactive shells get "human" features
+# - colors
+# - formatted prompt string
+# - tmux session
+# Non-interactive shells should not get these as they may interfere with how
+# scripts execute over ssh.
 
 # The shell searches all directories listed in $PATH for the command entered.
 # $PATH is a colon-separated list.
@@ -37,10 +41,6 @@ add_to_path "$HOME/.local/bin"
 # ##############################################################################
 # If not running interactively, skip the rest of this file
 # ##############################################################################
-
-# This prevents non-terminal consumers (graphical login screen, shell scripts
-# connecting over SSH) from getting caught in tmux or loading human-only shell
-# features like colors.
 
 case $- in
   *i*) ;;
