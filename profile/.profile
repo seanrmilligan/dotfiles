@@ -28,7 +28,7 @@ add_to_path "$HOME/bin"
 add_to_path "$HOME/.local/bin"
 
 # Attach to a tmux session. Create the session if there isn't one.
-if [ -z "$TMUX" ]; then
+if command -v tmux > /dev/null 2>&1 && [ -z "$TMUX" ]; then
   tmux new-session -A -s main
 fi
 
