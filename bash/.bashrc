@@ -70,16 +70,26 @@ mkw() {
     return $?
   fi
 
+  # Check that a workspace name was given
+  if [ -z "$1" ]; then
+    err "mkw: missing workspace name"
+    err "Usage: mkw <name>"
+    return 2
+  fi
+
+  # Check for write and search permissions on the parent directory.
+  # mkdir needs both on $WORKSPACE_ROOT:
+  #   - x - execute/search permission to resolve paths within $WORKSPACE_ROOT
+  #   - w - write permission to create the workspace subdirectory '$1'
+  if [ ! -w "$WORKSPACE_ROOT" ] || [ ! -x "$WORKSPACE_ROOT" ]; then
+    err "Could not create workspace '$1': permission denied"
+    return 5
+  fi
+
   # Check if path exists
   if [ -e "$WORKSPACE_ROOT/$1" ]; then
     err "Could not create workspace '$1': file exists"
     return 4
-  fi
-
-  # Check if write permissions are granted
-  if [ -w "$WORKSPACE_ROOT/$1" ]; then
-    err "Could not create workspace '$1': permission denied"
-    return 5
   fi
 
   mkdir "$WORKSPACE_ROOT/$1"
@@ -565,3 +575,6 @@ if [ -x /usr/bin/dircolors ]; then
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
 fi
+
+# A cheeky companion to `whoami`
+alias whereami='uname -n'
