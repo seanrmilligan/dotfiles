@@ -3,7 +3,7 @@
 ## The One-liner
 ```
 git clone git@github.com:seanrmilligan/dotfiles "$HOME/dotfiles" &&
-  bash "$HOME/dotfiles/install-dotfiles.sh" &&
+  bash "$HOME/dotfiles/install-dotfiles.sh" [--headless|--desktop] &&
   bash "$HOME/dotfiles/install-packages.sh" [--headless|--desktop]
 ```
 
