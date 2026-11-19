@@ -28,4 +28,7 @@
   # Swap the last two commits in the commit history (for easier amending)
   swap = "!GIT_SEQUENCE_EDITOR=\"sed -i -n 'h;1n;2p;g;p'\" git rebase -i HEAD~2"
   ignored = ls-files --others --ignored --exclude-standard
+  # Find commits whose diff adds/removes a string (search) or matches a regex (rsearch)
+  search = log -S
+  rsearch = log -G
 
