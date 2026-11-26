@@ -7,6 +7,14 @@ git clone git@github.com:seanrmilligan/dotfiles "$HOME/dotfiles" &&
   bash "$HOME/dotfiles/install-packages.sh"
 ```
 
+`install-packages.sh` will prompt for the machine type. To skip the prompt, pass
+it as a flag:
+
+```
+bash "$HOME/dotfiles/install-packages.sh" --headless
+bash "$HOME/dotfiles/install-packages.sh" --desktop
+```
+
 ## GNU Stow
 GNU Stow is a symlink manager used to centrally locate files in a filesystem
 while making them appear to be spread throughout the filesystem.
