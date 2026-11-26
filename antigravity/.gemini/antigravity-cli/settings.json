@@ -36,7 +36,13 @@
       "command(git ls-files)",
       "command(git show)",
       "command(git ls-tree)",
-      "command(gh pr view)"
+      "command(git grep)",
+      "command(git reflog)",
+      "command(git range-diff)",
+      "command(zgrep)",
+      "command(stat)",
+      "command(gh pr view)",
+      "command(gh pr list)"
     ]
   },
   "statusLine": {
