@@ -36,8 +36,6 @@ install_key() {
   # --dearmor decodes an ascii-encoded key to raw binary
   #   Therefore, there is an assumption that keys fetched are ascii-encoded.
   # --yes grants permission to overwrite the key if it exists
-  # Only writing the key into the root-owned keyring directory needs sudo. The
-  # download itself runs as the invoking user.
   wget "$public_key_url"                  \
     --quiet                               \
     --output-document=-                   |
@@ -93,8 +91,8 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-# Root privileges are requested with sudo only for the commands that need them.
-# Refuse to run the whole script as root.
+# Root privileges are requested as necessary, so avoid running the whole script
+# as root.
 if [ "$(id -u)" -eq 0 ]; then
   err "Do not run as root. Commands that need root will invoke sudo."
   exit 1
