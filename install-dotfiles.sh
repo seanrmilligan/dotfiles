@@ -23,13 +23,24 @@ usage() {
 
 machine_type=""
 
+# Machine types are mutually exclusive. Repeating the same flag is harmless, but
+# supplying both is an error rather than letting the last one silently win.
+set_machine_type() {
+  if [ -n "$machine_type" ] && [ "$machine_type" != "$1" ]; then
+    err "--headless and --desktop are mutually exclusive."
+    usage >&2
+    exit 1
+  fi
+  machine_type="$1"
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --headless)
-      machine_type="headless"
+      set_machine_type "headless"
       ;;
     --desktop)
-      machine_type="desktop"
+      set_machine_type "desktop"
       ;;
     -h | --help)
       usage
