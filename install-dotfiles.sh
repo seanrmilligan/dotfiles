@@ -3,7 +3,7 @@
 set -e
 
 err() {
-  echo "$*" >&2
+  echo "Error: $*" >&2
 }
 
 usage() {
