@@ -37,7 +37,7 @@
       "command(git show)",
       "command(git ls-tree)",
       "command(git grep)",
-      "command(git reflog)",
+      "command(git reflog show)",
       "command(git range-diff)",
       "command(zgrep)",
       "command(stat)",
