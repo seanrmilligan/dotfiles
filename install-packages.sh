@@ -36,11 +36,11 @@ install_key() {
   # --dearmor decodes an ascii-encoded key to raw binary
   #   Therefore, there is an assumption that keys fetched are ascii-encoded.
   # --yes grants permission to overwrite the key if it exists
-  wget "$public_key_url"             \
-    --quiet                          \
-    --output-document=-              |
-    gpg --output="$key_install_path" \
-      --dearmor                      \
+  wget "$public_key_url"                  \
+    --quiet                               \
+    --output-document=-                   |
+    sudo gpg --output="$key_install_path" \
+      --dearmor                           \
       --yes
 }
 
@@ -50,7 +50,7 @@ configure_source() {
   # Copy apt sources rather than symlink through stow.
   # The '_apt' user must have read access to the file, and the '_apt' user
   # will not have access to the /home/$(whoami)/dotfiles directory.
-  cp "$DOTFILES_ROOT/$1" "/etc/apt/sources.list.d/$(basename "$1")"
+  sudo cp "$DOTFILES_ROOT/$1" "/etc/apt/sources.list.d/$(basename "$1")"
 }
 
 # ##############################################################################
@@ -91,8 +91,10 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-if [ "$(id -u)" -ne 0 ]; then
-  err "Must run as root."
+# Root privileges are requested as necessary, so avoid running the whole script
+# as root.
+if [ "$(id -u)" -eq 0 ]; then
+  err "Do not run as root. Commands that need root will invoke sudo."
   exit 1
 fi
 
@@ -112,7 +114,7 @@ echo "Installing packages for a $machine_type machine."
 # COMMON PACKAGES
 # ##############################################################################
 
-apt install        \
+sudo apt install   \
   bat              \
   curl             \
   gcc              \
@@ -136,9 +138,9 @@ then
 
   configure_source "docker/docker.sources"
 
-  apt update
+  sudo apt update
 
-  apt install             \
+  sudo apt install        \
     docker-ce             \
     docker-ce-cli         \
     containerd.io         \
@@ -152,7 +154,7 @@ fi
 
 if [ "$machine_type" = "headless" ]; then
   # tmux keeps sessions alive by ignoring SIGHUP when signing out of a server.
-  apt install \
+  sudo apt install \
     tmux
 fi
 
@@ -161,8 +163,8 @@ fi
 # ##############################################################################
 
 if [ "$machine_type" = "desktop" ]; then
-  apt install     \
-    ghostty       \
+  sudo apt install \
+    ghostty        \
     gnome-keyring
 
   # Install Sublime Text
@@ -173,9 +175,9 @@ if [ "$machine_type" = "desktop" ]; then
 
     configure_source "sublime/sublime-text.sources"
 
-    apt update
+    sudo apt update
 
-    apt install sublime-text sublime-merge
+    sudo apt install sublime-text sublime-merge
   fi
 
   # Install VS Code
@@ -187,9 +189,9 @@ if [ "$machine_type" = "desktop" ]; then
 
     configure_source "vscode/vscode.sources"
 
-    apt update
+    sudo apt update
 
-    apt install code
+    sudo apt install code
   fi
 
   # Install Google Chrome
@@ -201,7 +203,7 @@ if [ "$machine_type" = "desktop" ]; then
       --location \
       --output="$chrome_installer"
 
-    apt install "$chrome_installer"
+    sudo apt install "$chrome_installer"
   fi
 
   # Install GitKraken
@@ -218,6 +220,6 @@ if [ "$machine_type" = "desktop" ]; then
       --location                                                 \
       --output="$gitkraken_installer"
 
-    apt install "$gitkraken_installer"
+    sudo apt install "$gitkraken_installer"
   fi
 fi
