@@ -11,12 +11,10 @@ err() {
 usage() {
   echo "Usage: $(basename "$0") [--headless | --desktop]"
   echo
-  echo "Install packages for this machine. Packages common to all machines are"
-  echo "always installed. The machine type selects the remaining packages:"
+  echo "Install packages on this machine. The machine type selected determines"
+  echo "whether graphical applications are installed:"
   echo "  --headless  Servers and other machines without a graphical session."
   echo "  --desktop   Machines with a graphical session."
-  echo
-  echo "If no machine type is given, you will be prompted for one."
 }
 
 # Key locations:
@@ -153,7 +151,7 @@ fi
 # ##############################################################################
 
 if [ "$machine_type" = "headless" ]; then
-  # tmux keeps sessions alive through SIGHUP when signing out of a server.
+  # tmux keeps sessions alive by ignoring SIGHUP when signing out of a server.
   apt install \
     tmux
 fi
@@ -207,10 +205,9 @@ if [ "$machine_type" = "desktop" ]; then
   fi
 
   # Install GitKraken
-  # GitKraken will not register with apt for automatic updates, so we do not guard
-  # against its binary already being configured. Instead we run this every time.
-  # Check that gitkraken is not running to prevent any disruption. (This is
-  # implicitly checked for the others when we see if the binary is installed.)
+  # GitKraken will not register with apt for automatic updates, so do not guard
+  # against its binary already being installed. Instead, run this every time.
+  # Check that gitkraken is not running to prevent any disruption.
   if pgrep -x "gitkraken" > /dev/null
   then
     err "GitKraken is open. Close it before updating."
