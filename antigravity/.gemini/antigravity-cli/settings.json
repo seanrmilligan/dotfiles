@@ -35,7 +35,8 @@
       "command(echo)",
       "command(git ls-files)",
       "command(git show)",
-      "command(git ls-tree)"
+      "command(git ls-tree)",
+      "command(gh pr view)"
     ]
   },
   "statusLine": {
