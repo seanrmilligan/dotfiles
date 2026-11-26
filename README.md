@@ -4,7 +4,15 @@
 ```
 git clone git@github.com:seanrmilligan/dotfiles "$HOME/dotfiles" &&
   bash "$HOME/dotfiles/install-dotfiles.sh" &&
-  bash "$HOME/dotfiles/install-packages.sh" [--headless|--desktop]
+  bash "$HOME/dotfiles/install-packages.sh"
+```
+
+`install-packages.sh` will prompt for the machine type. To skip the prompt, pass
+it as a flag:
+
+```
+bash "$HOME/dotfiles/install-packages.sh" --headless
+bash "$HOME/dotfiles/install-packages.sh" --desktop
 ```
 
 ## GNU Stow
