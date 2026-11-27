@@ -7,11 +7,14 @@ git clone git@github.com:seanrmilligan/dotfiles "$HOME/dotfiles" &&
   bash "$HOME/dotfiles/install-packages.sh"
 ```
 
-`install-packages.sh` will prompt for the machine type. To skip the prompt, pass
-it as a flag:
+Both scripts will prompt for the machine type. To skip the prompts, pass it as a
+flag:
 
 ```
+bash "$HOME/dotfiles/install-dotfiles.sh" --headless
 bash "$HOME/dotfiles/install-packages.sh" --headless
+
+bash "$HOME/dotfiles/install-dotfiles.sh" --desktop
 bash "$HOME/dotfiles/install-packages.sh" --desktop
 ```
 
