@@ -86,13 +86,13 @@ echo "Installing dotfiles for a $machine_type machine."
 # corresponding program, we don't end up with a symlinked directory. This avoids
 # files being written back to the repository as the app creates caches, logs,
 # etc. in its (symlinked) folder.
-mkdir --parents $HOME/.claude/skills
-mkdir --parents $HOME/.config/
-mkdir --parents $HOME/.gemini/antigravity-cli
+mkdir --parents "$HOME/.claude/skills"
+mkdir --parents "$HOME/.config/"
+mkdir --parents "$HOME/.gemini/antigravity-cli"
 
 if [ "$machine_type" = "desktop" ]; then
-  mkdir --parents $HOME/.config/sublime-text-3/Packages/User
-  mkdir --parents $HOME/.config/terminator
+  mkdir --parents "$HOME/.config/sublime-text-3/Packages/User"
+  mkdir --parents "$HOME/.config/terminator"
 fi
 
 packages=(
@@ -121,6 +121,6 @@ fi
 # exist locally. The --adopt flag tells Stow to take in the local file over our
 # version, making it safe to set up the symlink. We then revert any changes this
 # introduced -- we do want to install our version of the file, after all.
-stow --adopt --dir=$HOME/dotfiles --target=$HOME "${packages[@]}"
+stow --adopt --dir="$HOME/dotfiles" --target="$HOME" "${packages[@]}"
 
-git -C $HOME/dotfiles checkout . > /dev/null 2>&1
+git -C "$HOME/dotfiles" checkout . > /dev/null 2>&1
