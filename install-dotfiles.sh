@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -e
+set -o errexit   # exit immediately on errors
+set -o nounset   # exit immediately upon encountering an unset variable
+set -o pipefail  # surface errors in pipes (not just the last exit code)
 
 err() {
   echo "Error: $*" >&2
