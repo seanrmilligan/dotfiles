@@ -1,7 +1,7 @@
 {
   "allowNonWorkspaceAccess": false,
   "colorScheme": "dark",
-  "model": "Claude Sonnet 4.6 (Thinking)",
+  "model": "Claude Opus 5.5 (Medium)",
   "notifications": true,
   "permissions": {
     "allow": [
@@ -49,12 +49,6 @@
     "type": "command",
     "command": "~/.gemini/antigravity-cli/statusline.sh"
   },
-  "trustedWorkspaces": [
-    "/home/sean/projects/pomodoro",
-    "/home/sean/dotfiles",
-    "/home/sean/projects/dotfiles",
-    "/home/sean/projects/media-server",
-    "/home/sean/projects/backup"
-  ],
+  "trustedWorkspaces": [],
   "useG1Credits": true
 }
